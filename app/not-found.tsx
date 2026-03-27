@@ -2,8 +2,11 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl items-center px-4 py-10 sm:px-6">
-      <section className="paper-shell w-full rounded-[2rem] border border-border px-8 py-12 sm:px-12">
+    <main
+      id="main-content"
+      className="mx-auto flex min-h-screen w-full max-w-4xl items-center px-4 py-10 sm:px-6"
+    >
+      <section className="paper-shell motion-enter w-full rounded-[2rem] border border-border px-8 py-12 sm:px-12">
         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-muted">
           Shared analysis
         </p>
@@ -15,19 +18,13 @@ export default function NotFound() {
           persistence may not be configured in this deployment.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/"
-            className="rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#163129]"
-          >
+          <Link href="/" className="button-primary">
             Return to the analyzer
           </Link>
-          <a
-            href="/archive"
-            className="rounded-full border border-border bg-paper-strong px-5 py-3 text-sm text-muted transition hover:border-accent hover:text-accent"
-          >
+          <a href="/archive" className="button-secondary">
             Open archive
           </a>
-          <span className="rounded-full border border-border bg-paper-strong px-5 py-3 text-sm text-muted">
+          <span className="status-chip">
             Share links require PostgreSQL-backed persistence
           </span>
         </div>

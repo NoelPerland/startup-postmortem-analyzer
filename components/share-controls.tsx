@@ -42,7 +42,7 @@ export function ShareControls({
 
     if (!shareAvailable) {
       setMessage(
-        "Permalinks require persistence in this deployment. Print to PDF or keep this tab open.",
+        "Permalinks require persistence in this deployment. Export as PDF or keep this tab open.",
       );
       return;
     }
@@ -75,7 +75,7 @@ export function ShareControls({
 
       if (!("available" in payload) || !payload.available) {
         setMessage(
-          "Permalinks require persistence in this deployment. Print to PDF or keep this tab open.",
+          "Permalinks require persistence in this deployment. Export as PDF or keep this tab open.",
         );
         return;
       }
@@ -84,9 +84,7 @@ export function ShareControls({
       await copyLink(payload.shareUrl, "Permalink created and copied.");
     } catch (error) {
       setMessage(
-        error instanceof Error
-          ? error.message
-          : "Unable to create a permalink right now.",
+        error instanceof Error ? error.message : "Unable to create a permalink right now.",
       );
     } finally {
       setBusy(false);
@@ -105,16 +103,12 @@ export function ShareControls({
               void handleShare();
             }}
             disabled={busy}
-            className="rounded-full border border-border bg-white px-5 py-3 text-sm font-semibold text-foreground transition hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-70"
+            className="button-secondary"
           >
             {busy ? "Creating permalink" : shareLabel}
           </button>
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#163129]"
-          >
-            Print / Save as PDF
+          <button type="button" onClick={() => window.print()} className="button-primary">
+            Export as PDF
           </button>
         </div>
         <p className="text-sm leading-6 text-muted">
@@ -123,12 +117,27 @@ export function ShareControls({
       </div>
 
       {shareUrl ? (
-        <div className="rounded-[1.25rem] border border-border bg-paper-strong px-4 py-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+        <div className="surface-card px-4 py-4">
+          <label
+            htmlFor="share-url"
+            className="text-xs font-semibold uppercase tracking-[0.18em] text-muted"
+          >
             Permalink
-          </p>
-          <p className="mt-2 break-all text-sm leading-6 text-foreground">{shareUrl}</p>
+          </label>
+          <input
+            id="share-url"
+            readOnly
+            value={shareUrl}
+            className="input-surface mt-3 text-sm break-all"
+            aria-label="Saved permalink"
+          />
         </div>
+      ) : null}
+
+      {!shareAvailable && !shareUrl ? (
+        <p className="text-sm leading-6 text-muted">
+          Durable links need PostgreSQL. PDF export still works now.
+        </p>
       ) : null}
 
       <p className="text-sm leading-6 text-muted" role="status" aria-live="polite">

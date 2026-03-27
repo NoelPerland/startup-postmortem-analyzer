@@ -4,6 +4,7 @@
 
 - [ ] Homepage reads clearly in under 10 seconds
 - [ ] Demo Mode feels intentional, not apologetic
+- [ ] Light and dark themes both feel polished and readable
 - [ ] First successful generation feels polished
 - [ ] Share and PDF outputs are both obvious
 - [ ] Shared permalink page feels first-class
@@ -27,6 +28,10 @@
 - [ ] `npm run typecheck`
 - [ ] `npm run test`
 - [ ] `npm run build`
+- [ ] Mobile checks at 320px, 375px, and tablet width
+- [ ] Keyboard-only pass through form, theme toggle, archive links, and share controls
+- [ ] Reduced-motion pass looks calm and usable
+- [ ] Print preview first page and appendix page breaks look clean
 
 ## Submission Prep
 

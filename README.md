@@ -15,6 +15,7 @@ Startup Post-Mortem Analyzer is a newsroom-style research assistant for producin
 - Supports print-based PDF export
 - Supports durable share links when PostgreSQL is configured
 - Adds Open Graph and Twitter previews for the site and saved permalink pages
+- Includes a persisted light/dark theme with system preference support
 - Optionally caches live analyses in Valkey and indexes saved analyses in Meilisearch
 - Includes a lightweight optional archive page for recent saved drafts
 

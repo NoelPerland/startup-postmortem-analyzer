@@ -9,6 +9,7 @@ Startup Post-Mortem Analyzer is a newsroom-style assistant that turns a startup 
 - Zero-env local boot
 - Curated sample analyses plus generic fallback
 - Article rendering, print/PDF export, and safe `/api/health`
+- Light/dark theme toggle with system preference support
 - Calm stateless handling when durable sharing is unavailable
 
 ## What Works With Optional Services

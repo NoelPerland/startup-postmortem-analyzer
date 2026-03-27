@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, Newsreader } from "next/font/google";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { getEnv } from "@/lib/env";
 import { buildDefaultMetadata } from "@/lib/social";
+import { getThemeInitScript } from "@/lib/theme";
 import "./globals.css";
 
 const bodyFont = IBM_Plex_Sans({
@@ -26,9 +28,21 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-theme="light"
+      data-theme-preference="system"
+      suppressHydrationWarning
       className={`${bodyFont.variable} ${headlineFont.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: getThemeInitScript() }} />
+      </head>
+      <body className="min-h-full flex flex-col">
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
+        <ThemeToggle />
+        {children}
+      </body>
     </html>
   );
 }

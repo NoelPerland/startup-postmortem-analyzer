@@ -4,8 +4,11 @@
 
 - Homepage with empty state
 - Homepage with Demo Mode visible
+- Homepage in dark mode
 - Filled form before generation
 - First successful generated article
+- Mobile homepage
+- Mobile generated article
 - Article header metadata area
 - Timeline section
 - Editorial appendix with facts / hypotheses / open questions
@@ -13,6 +16,7 @@
 - Shared permalink unfurl preview
 - Print-friendly article preview
 - Shared permalink page
+- Long permalink / manual copy state
 - Archive page with recent drafts
 - Archive unavailable state without PostgreSQL
 - Archive page with zero search results

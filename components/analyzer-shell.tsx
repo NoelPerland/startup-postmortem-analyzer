@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useMemo, useRef, useState } from "react";
 import { generatePostMortemAction } from "@/app/analyze/actions";
 import {
   initialAnalyzerState,
@@ -32,6 +32,8 @@ const seededInitialState = (
 export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   const [subject, setSubject] = useState("");
   const [contextNotes, setContextNotes] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
+  const subjectRef = useRef<HTMLInputElement>(null);
   const initialState = seededInitialState(runtime);
   const [state, formAction, pending] = useActionState(
     generatePostMortemAction,
@@ -44,6 +46,8 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   const analysis = currentState.analysis;
   const hasResult = currentState.status === "success" && analysis !== null;
   const featuredExamples = demoExamples.slice(0, 4);
+  const leadExample = featuredExamples[0];
+  const subjectHasError = currentState.status === "error" && !currentInput.subject.trim();
   const errorTone = useMemo(() => {
     if (!currentInput.subject.trim()) {
       return {
@@ -60,80 +64,181 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
     };
   }, [currentInput.subject, currentState.message]);
 
+  function focusForm() {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    formRef.current?.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+    window.setTimeout(() => subjectRef.current?.focus(), 120);
+  }
+
+  function applyExample(subjectValue: string, noteValue: string) {
+    setSubject(subjectValue);
+    setContextNotes(noteValue);
+    focusForm();
+  }
+
   return (
     <div className="flex flex-1 flex-col gap-8">
-      <section className="paper-shell rounded-[2rem] border border-border px-6 py-8 sm:px-8 sm:py-10 lg:px-12">
+      <section className="paper-shell motion-enter rounded-[2rem] border border-border px-5 py-6 sm:px-8 sm:py-8 lg:px-12 lg:py-10">
         <div className="flex flex-wrap items-center gap-3 text-sm">
-          <span className="rounded-full border border-border bg-paper-strong px-3 py-1 text-muted">
-            Editorial research tool
-          </span>
-          {!runtime.liveAvailable ? (
-            <span className="rounded-full bg-accent-soft px-3 py-1 font-medium text-accent">
-              Demo Mode
-            </span>
-          ) : (
-            <span className="rounded-full bg-accent px-3 py-1 font-medium text-white">
-              Live model ready
-            </span>
-          )}
-          <span className="rounded-full border border-border px-3 py-1 text-muted">
-            {runtime.persistenceConfigured
-              ? "Share links enabled"
-              : "Stateless deployment"}
+          <span className="status-chip">Editorial research tool</span>
+          <span className="status-chip status-chip-strong">
+            {runtime.liveAvailable ? "Live mode ready" : "Demo Mode ready"}
           </span>
         </div>
 
-        <div className="mt-6 grid gap-8 lg:grid-cols-[1.12fr_0.88fr]">
-          <div>
+        <div className="mt-8 grid gap-6 xl:grid-cols-[1.08fr_0.92fr] xl:gap-10">
+          <div className="motion-enter motion-delay-1">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-muted">
               Startup Post-Mortem Analyzer
             </p>
-            <h1 className="mt-4 max-w-3xl font-serif text-4xl leading-tight text-foreground sm:text-5xl lg:text-[3.7rem]">
+            <h1 className="text-balance mt-4 max-w-4xl font-serif text-4xl leading-tight text-foreground sm:text-5xl lg:text-[4rem]">
               Turn a startup name into a sober editorial post-mortem draft.
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-muted sm:text-lg">
-              A calm first pass for newsroom prep: timeline, failure factors,
-              disciplined counterfactuals, and the questions that still need reporting.
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-foreground">
+              Structured reporting support for early research, not publication-ready fact.
             </p>
+            <p className="mt-3 max-w-2xl text-base leading-8 text-muted sm:text-lg">
+              Timeline, failure factors, disciplined counterfactuals, and unresolved
+              questions in one readable first draft.
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button type="button" className="button-primary" onClick={focusForm}>
+                Start a draft
+              </button>
+              <button
+                type="button"
+                className="button-secondary"
+                onClick={() => applyExample(leadExample.subject, leadExample.contextNotes)}
+              >
+                Try Northvolt sample
+              </button>
+              <a href="/archive" className="button-ghost">
+                Open archive
+              </a>
+            </div>
+
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              <div className="surface-card px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+                  What you get
+                </p>
+                <p className="mt-2 text-sm leading-6 text-foreground">
+                  Timeline, failure analysis, salvage options, and founder lessons.
+                </p>
+              </div>
+              <div className="surface-card px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+                  Output paths
+                </p>
+                <p className="mt-2 text-sm leading-6 text-foreground">
+                  Durable permalink when persistence exists, plus clean PDF export.
+                </p>
+              </div>
+              <div className="surface-card px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+                  Trust model
+                </p>
+                <p className="mt-2 text-sm leading-6 text-foreground">
+                  Facts, hypotheses, and open questions stay visibly separated.
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="rounded-[1.75rem] border border-border bg-paper-strong p-5">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
-              Best first demo
-            </p>
-            <p className="mt-3 text-sm leading-7 text-muted">
-              Start with one of these four cases, add one line of reporter notes,
-              then show the article, permalink, and PDF flow.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {featuredExamples.map((example) => (
-                <button
-                  key={example.label}
-                  type="button"
-                  onClick={() => {
-                    setSubject(example.subject);
-                    setContextNotes(example.contextNotes);
-                  }}
-                  className="rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-foreground transition hover:border-accent hover:text-accent"
-                >
-                  {example.label}
-                </button>
-              ))}
+          <div className="motion-enter motion-delay-2 space-y-4">
+            <div className="surface-card p-5 sm:p-6">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
+                Try one now
+              </p>
+              <p className="mt-3 text-sm leading-7 text-muted">
+                Start with a recognizable case, add one line of reporting context,
+                then show the article, permalink, and PDF flow.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {featuredExamples.map((example) => (
+                  <button
+                    key={example.label}
+                    type="button"
+                    onClick={() => applyExample(example.subject, example.contextNotes)}
+                    className="chip-button"
+                  >
+                    {example.label}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-4 text-sm leading-6 text-muted">
+                Paste a company homepage when you want a cleaner lookup target.
+              </p>
             </div>
-            <p className="mt-4 text-sm leading-6 text-muted">
-              You can also paste a company homepage URL directly when you want a cleaner lookup target.
-            </p>
+
+            <div className="surface-inset px-5 py-5 sm:px-6">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
+                How it works
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+                    1. Start with the company
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-foreground">
+                    Name or URL is enough to begin.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+                    2. Add the angle
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-foreground">
+                    Notes stay optional unless you want to steer the draft.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+                    3. Share or export
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-foreground">
+                    Review the result, then save a link or export a PDF.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {!runtime.liveAvailable ? (
-          <div className="mt-8 rounded-[1.5rem] border border-accent/15 bg-accent-soft px-5 py-4 text-sm leading-7 text-accent">
-            <span className="font-semibold">Demo Mode.</span> Fully usable sample
-            workflow, curated for review and live demos.
+          <div className="motion-enter motion-delay-3 mt-8 rounded-[1.45rem] border border-accent/15 bg-accent-soft px-5 py-4 text-sm leading-7 text-accent">
+            <span className="font-semibold">Demo Mode.</span> Curated sample workflow,
+            same structure, same export path, and the same review framing as a live run.
           </div>
         ) : null}
 
-        <form action={formAction} className="mt-8 grid gap-4" aria-busy={pending}>
+        <form
+          id="analyzer-form"
+          ref={formRef}
+          action={formAction}
+          className="motion-enter motion-delay-2 mt-8 grid gap-5 rounded-[1.8rem] border border-border bg-paper/70 px-5 py-6 sm:px-6 sm:py-7"
+          aria-busy={pending}
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">
+                Build the draft
+              </p>
+              <p className="mt-2 text-sm leading-6 text-muted">
+                Start with a company. Add notes only if you want to steer the angle.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+              <span className="status-chip">Timeline</span>
+              <span className="status-chip">Failure factors</span>
+              <span className="status-chip">Open questions</span>
+            </div>
+          </div>
+
           <div>
             <label
               htmlFor="subject"
@@ -142,13 +247,16 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               Company name or URL
             </label>
             <input
+              ref={subjectRef}
               id="subject"
               name="subject"
+              required
               value={subject}
               onChange={(event) => setSubject(event.target.value)}
               placeholder="e.g. Northvolt, Quibi, Theranos, or company.com"
-              className="mt-2 w-full rounded-[1.35rem] border border-border bg-white px-5 py-4 text-base text-foreground outline-none transition focus:border-accent"
-              aria-describedby="subject-help"
+              className="input-surface mt-2"
+              aria-describedby={`subject-help${subjectHasError ? " subject-error" : ""}`}
+              aria-invalid={subjectHasError}
             />
             <p id="subject-help" className="mt-2 text-sm leading-6 text-muted">
               Use the company name, its homepage, or the short name most often used in public reporting.
@@ -169,7 +277,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               value={contextNotes}
               onChange={(event) => setContextNotes(event.target.value)}
               placeholder="Optional: funding strain, manufacturing risk, governance tension, market timing, or the angle you want to test"
-              className="mt-2 w-full rounded-[1.35rem] border border-border bg-white px-5 py-4 text-base text-foreground outline-none transition focus:border-accent"
+              className="input-surface mt-2 min-h-[8.75rem] resize-y"
               aria-describedby="context-help"
             />
             <p id="context-help" className="mt-2 text-sm leading-6 text-muted">
@@ -177,33 +285,38 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="submit"
-              disabled={pending}
-              className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#163129] disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {pending ? "Building first draft" : "Generate analysis"}
-            </button>
-            <span className="text-sm text-muted">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="submit" disabled={pending} className="button-primary">
+                {pending ? "Generating draft..." : "Generate first draft"}
+              </button>
+              <a href="/archive" className="button-secondary">
+                Browse archive
+              </a>
+            </div>
+            <span className="text-sm leading-6 text-muted">
               First draft, not a verdict. Use it to tighten reporting, not replace it.
             </span>
           </div>
         </form>
 
         {pending ? (
-          <div className="mt-6 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-5" role="status" aria-live="polite">
+          <div
+            className="motion-enter mt-6 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-5"
+            role="status"
+            aria-live="polite"
+          >
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted">
               Building draft
             </p>
             <ol className="mt-4 grid gap-3 text-sm leading-7 text-muted">
-              <li className="rounded-[1rem] border border-border bg-white px-4 py-3">
+              <li className="surface-inset px-4 py-3">
                 1. Normalizing the subject and reporter notes
               </li>
-              <li className="rounded-[1rem] border border-border bg-white px-4 py-3">
+              <li className="surface-inset px-4 py-3">
                 2. Ordering a usable timeline and section structure
               </li>
-              <li className="rounded-[1rem] border border-border bg-white px-4 py-3">
+              <li className="surface-inset px-4 py-3">
                 3. Separating facts, inference, and open questions
               </li>
             </ol>
@@ -211,21 +324,28 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
         ) : null}
 
         {currentState.status === "error" ? (
-          <div className="mt-6 rounded-[1.5rem] border border-danger/20 bg-[#fff4ef] px-5 py-4 text-sm leading-7 text-danger" role="alert">
-            <span className="font-semibold">{errorTone.title}</span>{" "}
-            {errorTone.detail}
+          <div
+            id={subjectHasError ? "subject-error" : undefined}
+            className="motion-enter mt-6 rounded-[1.5rem] border border-danger/25 bg-[color:color-mix(in_srgb,var(--danger)_10%,transparent)] px-5 py-4 text-sm leading-7 text-danger"
+            role="alert"
+          >
+            <span className="font-semibold">{errorTone.title}</span> {errorTone.detail}
           </div>
         ) : null}
 
         {currentState.status === "success" && currentState.message ? (
-          <div className="mt-6 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-4 text-sm leading-7 text-muted" role="status" aria-live="polite">
+          <div
+            className="motion-enter mt-6 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-4 text-sm leading-7 text-muted"
+            role="status"
+            aria-live="polite"
+          >
             <span className="font-semibold text-foreground">Draft status.</span>{" "}
             {currentState.message}
           </div>
         ) : null}
 
         {!hasResult && !pending && currentState.status !== "error" ? (
-          <div className="mt-6 rounded-[1.5rem] border border-dashed border-border px-5 py-5 text-sm leading-7 text-muted">
+          <div className="motion-enter mt-6 rounded-[1.5rem] border border-dashed border-border px-5 py-5 text-sm leading-7 text-muted">
             <p className="font-semibold text-foreground">
               Start with the company, then test the theory.
             </p>
@@ -238,29 +358,37 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
       </section>
 
       {hasResult ? (
-        <ArticleView analysis={analysis}>
-          <div className="print-hidden border-t border-border px-6 py-5 sm:px-10">
-            <div className="mb-4 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-              <span className="rounded-full border border-border bg-paper-strong px-3 py-2">
-                Output 1: durable permalink
-              </span>
-              <span className="rounded-full border border-border bg-paper-strong px-3 py-2">
-                Output 2: clean PDF
-              </span>
+        <div className="motion-enter motion-delay-2 grid gap-4">
+          <div className="print-hidden flex flex-wrap items-center justify-between gap-3 px-1">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">
+                Draft ready
+              </p>
+              <p className="mt-2 text-sm leading-6 text-muted">
+                Review the article, then choose a durable link or a clean PDF.
+              </p>
             </div>
-            <ShareControls
-              analysis={analysis}
-              contextNotes={currentInput.contextNotes}
-              shareAvailable={currentRuntime.persistenceAvailable}
-              subject={currentInput.subject}
-            />
-            <p className="mt-3 text-sm leading-6 text-muted">
-              {currentRuntime.persistenceAvailable
-                ? "Create a durable permalink, copy it, or print the article for PDF export."
-                : "Stateless mode is active. Print to PDF now, or enable PostgreSQL to create durable links."}
-            </p>
+            <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+              <span className="status-chip">Output 1: share link</span>
+              <span className="status-chip">Output 2: PDF export</span>
+            </div>
           </div>
-        </ArticleView>
+          <ArticleView analysis={analysis}>
+            <div className="print-hidden border-t border-border px-6 py-5 sm:px-10">
+              <ShareControls
+                analysis={analysis}
+                contextNotes={currentInput.contextNotes}
+                shareAvailable={currentRuntime.persistenceAvailable}
+                subject={currentInput.subject}
+              />
+              <p className="mt-3 text-sm leading-6 text-muted">
+                {currentRuntime.persistenceAvailable
+                  ? "Create a durable permalink, copy it, or export the article as a PDF."
+                  : "Durable links need PostgreSQL. PDF export still works now."}
+              </p>
+            </div>
+          </ArticleView>
+        </div>
       ) : null}
     </div>
   );

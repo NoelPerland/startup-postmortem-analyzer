@@ -45,8 +45,11 @@ export default async function SharedAnalysisPage({ params }: SharedPageProps) {
   const shareUrl = buildShareUrl(resolvePublicOrigin(runtime.appUrl), shareId);
 
   return (
-    <main className="print-page mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8">
-      <div className="print-hidden mb-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted">
+    <main
+      id="main-content"
+      className="print-page mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8"
+    >
+      <div className="print-hidden motion-enter mb-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted">
         <div className="flex flex-wrap items-center gap-3">
           <Link href="/" className="font-medium text-accent transition hover:opacity-80">
             Back to analyzer
@@ -55,9 +58,9 @@ export default async function SharedAnalysisPage({ params }: SharedPageProps) {
             Archive
           </a>
         </div>
-        <span>Saved permalink</span>
+        <span>Saved editorial draft</span>
       </div>
-      <div className="print-hidden mb-4 rounded-[1.25rem] border border-border bg-paper-strong px-5 py-4 text-sm leading-7 text-muted">
+      <div className="print-hidden motion-enter motion-delay-1 mb-4 rounded-[1.25rem] border border-border bg-paper-strong px-5 py-4 text-sm leading-7 text-muted">
         This link preserves the saved draft as it was generated at the time of sharing.
         {record.analysis.sourceMode === "demo"
           ? " This permalink contains sample output from Demo Mode, not a live model response."

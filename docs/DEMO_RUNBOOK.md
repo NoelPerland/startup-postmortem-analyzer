@@ -7,7 +7,7 @@ Show the product as a calm newsroom tool, not an AI trick.
 ## Recommended Demo Path
 
 1. Open `/`
-2. Point out the editorial framing and the first-draft guardrail
+2. Point out the editorial framing, the first-draft guardrail, and the theme toggle
 3. Use `Northvolt / industrial scale` or `Quibi / consumer habit`
 4. Add one short note to sharpen the angle
 5. Generate the draft

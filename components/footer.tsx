@@ -1,6 +1,6 @@
 export function SiteFooter() {
   return (
-    <footer className="print-hidden mt-8 rounded-[2rem] border border-border bg-paper/80 px-6 py-8 sm:px-8">
+    <footer className="print-hidden motion-enter mt-8 rounded-[2rem] border border-border bg-paper/75 px-6 py-8 shadow-[var(--shadow-subtle)] backdrop-blur sm:px-8">
       <div className="grid gap-6 lg:grid-cols-[0.7fr_0.3fr]">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">

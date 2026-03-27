@@ -6,8 +6,11 @@ export default function Home() {
   const runtime = getRuntimeFlags();
 
   return (
-    <main className="print-page mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8">
-      <div className="print-hidden mb-4 flex items-center justify-between gap-3 text-sm text-muted">
+    <main
+      id="main-content"
+      className="print-page mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8"
+    >
+      <div className="print-hidden motion-enter mb-4 flex items-center justify-between gap-3 text-sm text-muted">
         <span>Prepared for editorial review</span>
         <a href="/archive" className="font-medium text-accent transition hover:opacity-80">
           Open archive
