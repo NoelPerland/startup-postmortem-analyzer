@@ -1,0 +1,3 @@
+# Testimonial Template
+
+As a business journalist, I am skeptical of tools that mistake fluency for reporting. This one is more disciplined than that. It gives me a usable first draft with a clear timeline, a sober breakdown of what likely went wrong, and, importantly, a clean separation between observed facts, plausible hypotheses, and open questions. That distinction matters if you are trying to turn a rough brief into publishable work. I also like that the product is demo-ready without an elaborate setup, yet still has a credible path on LIIVO toward saved links, caching, and archive indexing later. It feels less like an AI stunt and more like a practical editorial assistant that understands its place in a real reporting workflow.
