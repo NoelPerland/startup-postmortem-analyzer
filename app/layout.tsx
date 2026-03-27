@@ -29,7 +29,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="light"
-      data-theme-preference="system"
+      data-theme-preference="light"
       suppressHydrationWarning
       className={`${bodyFont.variable} ${headlineFont.variable} h-full antialiased`}
     >

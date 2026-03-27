@@ -18,10 +18,10 @@ export default function NotFound() {
           persistence may not be configured in this deployment.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/" className="button-primary">
+          <Link href="/" className="subtle-link">
             Return to the analyzer
           </Link>
-          <a href="/archive" className="button-secondary">
+          <a href="/archive" className="subtle-link">
             Open archive
           </a>
           <span className="status-chip">

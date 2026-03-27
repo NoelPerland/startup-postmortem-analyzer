@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  resolveAppliedTheme,
   sanitizeThemePreference,
   themePreferences,
   themeStorageKey,
@@ -11,38 +10,21 @@ import {
 
 function applyTheme(preference: ThemePreference) {
   const root = document.documentElement;
-  const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const applied = resolveAppliedTheme(preference, systemPrefersDark);
 
   root.dataset.themePreference = preference;
-  root.dataset.theme = applied;
-  root.style.colorScheme = applied;
+  root.dataset.theme = preference;
+  root.style.colorScheme = preference;
   localStorage.setItem(themeStorageKey, preference);
 }
 
 export function ThemeToggle() {
   const [preference, setPreference] = useState<ThemePreference>(() => {
     if (typeof document === "undefined") {
-      return "system";
+      return "light";
     }
 
     return sanitizeThemePreference(document.documentElement.dataset.themePreference);
   });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = () => {
-      const currentPreference = sanitizeThemePreference(root.dataset.themePreference);
-
-      if (currentPreference === "system") {
-        applyTheme("system");
-      }
-    };
-
-    media.addEventListener("change", handleChange);
-    return () => media.removeEventListener("change", handleChange);
-  }, []);
 
   return (
     <div

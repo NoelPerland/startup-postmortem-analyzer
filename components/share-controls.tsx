@@ -94,8 +94,8 @@ export function ShareControls({
   const shareLabel = shareUrl ? "Copy permalink" : "Create share link";
 
   return (
-    <div className="grid gap-4">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <div className="grid gap-5">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap gap-3">
           <button
             type="button"
@@ -117,7 +117,7 @@ export function ShareControls({
       </div>
 
       {shareUrl ? (
-        <div className="surface-card px-4 py-4">
+        <div className="surface-inset px-4 py-4">
           <label
             htmlFor="share-url"
             className="text-xs font-semibold uppercase tracking-[0.18em] text-muted"

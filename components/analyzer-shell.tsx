@@ -80,7 +80,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-8">
+    <div className="flex flex-1 flex-col gap-10">
       <section className="paper-shell motion-enter rounded-[2rem] border border-border px-5 py-6 sm:px-8 sm:py-8 lg:px-12 lg:py-10">
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <span className="status-chip">Editorial research tool</span>
@@ -116,13 +116,13 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               >
                 Try Northvolt sample
               </button>
-              <a href="/archive" className="button-ghost">
+              <a href="/archive" className="subtle-link">
                 Open archive
               </a>
             </div>
 
-            <div className="mt-7 grid gap-3 sm:grid-cols-3">
-              <div className="surface-card px-4 py-4">
+            <div className="section-divider mt-8 grid gap-4 pt-6 sm:grid-cols-3 sm:pt-7">
+              <div className="surface-card tint-warm px-5 py-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
                   What you get
                 </p>
@@ -130,7 +130,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
                   Timeline, failure analysis, salvage options, and founder lessons.
                 </p>
               </div>
-              <div className="surface-card px-4 py-4">
+              <div className="surface-card tint-accent px-5 py-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
                   Output paths
                 </p>
@@ -138,7 +138,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
                   Durable permalink when persistence exists, plus clean PDF export.
                 </p>
               </div>
-              <div className="surface-card px-4 py-4">
+              <div className="surface-card tint-cool px-5 py-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
                   Trust model
                 </p>
@@ -150,7 +150,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
           </div>
 
           <div className="motion-enter motion-delay-2 space-y-4">
-            <div className="surface-card p-5 sm:p-6">
+            <div className="surface-card tint-accent p-5 sm:p-6">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
                 Try one now
               </p>
@@ -175,7 +175,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               </p>
             </div>
 
-            <div className="surface-inset px-5 py-5 sm:px-6">
+            <div className="surface-inset tint-cool px-5 py-6 sm:px-6">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
                 How it works
               </p>
@@ -220,7 +220,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
           id="analyzer-form"
           ref={formRef}
           action={formAction}
-          className="motion-enter motion-delay-2 mt-8 grid gap-5 rounded-[1.8rem] border border-border bg-paper/70 px-5 py-6 sm:px-6 sm:py-7"
+          className="motion-enter motion-delay-2 mt-10 grid gap-6 rounded-[1.8rem] border border-border bg-paper/70 px-5 py-6 sm:px-6 sm:py-8"
           aria-busy={pending}
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -238,6 +238,8 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               <span className="status-chip">Open questions</span>
             </div>
           </div>
+
+          <div className="section-divider" />
 
           <div>
             <label
@@ -285,12 +287,12 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="section-divider flex flex-col gap-4 pt-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-wrap items-center gap-3">
               <button type="submit" disabled={pending} className="button-primary">
                 {pending ? "Generating draft..." : "Generate first draft"}
               </button>
-              <a href="/archive" className="button-secondary">
+              <a href="/archive" className="subtle-link">
                 Browse archive
               </a>
             </div>
@@ -302,7 +304,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
 
         {pending ? (
           <div
-            className="motion-enter mt-6 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-5"
+            className="motion-enter mt-8 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-5"
             role="status"
             aria-live="polite"
           >
@@ -326,7 +328,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
         {currentState.status === "error" ? (
           <div
             id={subjectHasError ? "subject-error" : undefined}
-            className="motion-enter mt-6 rounded-[1.5rem] border border-danger/25 bg-[color:color-mix(in_srgb,var(--danger)_10%,transparent)] px-5 py-4 text-sm leading-7 text-danger"
+            className="motion-enter mt-8 rounded-[1.5rem] border border-danger/25 bg-[color:color-mix(in_srgb,var(--danger)_10%,transparent)] px-5 py-4 text-sm leading-7 text-danger"
             role="alert"
           >
             <span className="font-semibold">{errorTone.title}</span> {errorTone.detail}
@@ -335,7 +337,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
 
         {currentState.status === "success" && currentState.message ? (
           <div
-            className="motion-enter mt-6 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-4 text-sm leading-7 text-muted"
+            className="motion-enter mt-8 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-4 text-sm leading-7 text-muted"
             role="status"
             aria-live="polite"
           >
@@ -345,7 +347,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
         ) : null}
 
         {!hasResult && !pending && currentState.status !== "error" ? (
-          <div className="motion-enter mt-6 rounded-[1.5rem] border border-dashed border-border px-5 py-5 text-sm leading-7 text-muted">
+          <div className="motion-enter mt-8 rounded-[1.5rem] border border-dashed border-border px-5 py-5 text-sm leading-7 text-muted">
             <p className="font-semibold text-foreground">
               Start with the company, then test the theory.
             </p>
@@ -358,7 +360,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
       </section>
 
       {hasResult ? (
-        <div className="motion-enter motion-delay-2 grid gap-4">
+        <div className="motion-enter motion-delay-2 grid gap-5">
           <div className="print-hidden flex flex-wrap items-center justify-between gap-3 px-1">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">
@@ -374,7 +376,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             </div>
           </div>
           <ArticleView analysis={analysis}>
-            <div className="print-hidden border-t border-border px-6 py-5 sm:px-10">
+            <div className="print-hidden border-t border-divider px-6 py-6 sm:px-10">
               <ShareControls
                 analysis={analysis}
                 contextNotes={currentInput.contextNotes}
