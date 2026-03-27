@@ -14,6 +14,7 @@ Startup Post-Mortem Analyzer is a newsroom-style research assistant for producin
 - Renders the result as a clean article, not a dashboard
 - Supports print-based PDF export
 - Supports durable share links when PostgreSQL is configured
+- Adds Open Graph and Twitter previews for the site and saved permalink pages
 - Optionally caches live analyses in Valkey and indexes saved analyses in Meilisearch
 - Includes a lightweight optional archive page for recent saved drafts
 
@@ -25,6 +26,7 @@ Startup Post-Mortem Analyzer is a newsroom-style research assistant for producin
 4. Review the article-style output
 5. Print to PDF or create a durable share link if persistence is configured
 6. Optionally review recent saved drafts in `/archive`
+7. Share a saved permalink that unfurls with a calm editorial preview
 
 ## Tech Stack
 
@@ -108,6 +110,7 @@ No secrets are exposed to client components.
 - Durable share links require `DATABASE_URL`
 - Without PostgreSQL, the app stays fully usable in stateless mode and clearly guides users toward print/PDF export
 - With PostgreSQL enabled, saved drafts are available at `/a/[shareId]`
+- Saved permalink pages include Open Graph and Twitter metadata for cleaner unfurls
 - If `MEILISEARCH_HOST` is also configured, saved analyses are indexed in the background
 
 ## Archive
@@ -116,6 +119,7 @@ No secrets are exposed to client components.
 - Without PostgreSQL, it explains that saved drafts are unavailable in this deployment
 - With PostgreSQL, it lists recent durable drafts
 - With PostgreSQL and Meilisearch, it also supports lightweight archive search
+- Search prioritizes company and subject matches, then falls back to concise preview snippets from the analysis body
 
 ## Optional Upgrade Path
 
@@ -137,6 +141,7 @@ Demo-facing handoff notes live in:
 - [`docs/DEMO_RUNBOOK.md`](./docs/DEMO_RUNBOOK.md)
 - [`docs/SCREENSHOT_SHOTLIST.md`](./docs/SCREENSHOT_SHOTLIST.md)
 - [`docs/FINAL_CHECKLIST.md`](./docs/FINAL_CHECKLIST.md)
+- [`docs/FINAL_HANDOFF.md`](./docs/FINAL_HANDOFF.md)
 
 ## Health Endpoint
 

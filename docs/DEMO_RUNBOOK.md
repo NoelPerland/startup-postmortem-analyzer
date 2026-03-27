@@ -15,7 +15,8 @@ Show the product as a calm newsroom tool, not an AI trick.
 7. Show the two outputs:
    - durable permalink
    - clean PDF
-8. Open `/archive` and show that saved drafts can be revisited later
+8. If PostgreSQL is configured, open `/archive` and show that saved drafts can be revisited later
+9. If PostgreSQL is not configured, stay on the permalink/PDF story and explain that archive history appears in the persistence-enabled deployment
 
 ## Best Talking Points
 
@@ -41,3 +42,9 @@ Show the product as a calm newsroom tool, not an AI trick.
 
 - Explain that this deployment is running in phase 1 stateless mode
 - Use the print-to-PDF path instead
+
+## If Archive Search Is Unavailable
+
+- Explain that archive search is a later-phase enhancement layered on top of durable saved drafts
+- Show the recent-drafts list if PostgreSQL exists
+- Do not promise search unless Meilisearch is actually configured

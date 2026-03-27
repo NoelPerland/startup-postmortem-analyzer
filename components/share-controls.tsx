@@ -42,7 +42,7 @@ export function ShareControls({
 
     if (!shareAvailable) {
       setMessage(
-        "This deployment is running in stateless mode. Print to PDF now, or enable PostgreSQL for durable links.",
+        "Permalinks require persistence in this deployment. Print to PDF or keep this tab open.",
       );
       return;
     }
@@ -69,13 +69,13 @@ export function ShareControls({
 
       if (!response.ok) {
         throw new Error(
-          "error" in payload ? payload.error : "Unable to create a shareable link.",
+          "error" in payload ? payload.error : "Unable to create a permalink right now.",
         );
       }
 
       if (!("available" in payload) || !payload.available) {
         setMessage(
-          "This deployment is running in stateless mode. Print to PDF now, or enable PostgreSQL for durable links.",
+          "Permalinks require persistence in this deployment. Print to PDF or keep this tab open.",
         );
         return;
       }
@@ -86,7 +86,7 @@ export function ShareControls({
       setMessage(
         error instanceof Error
           ? error.message
-          : "Unable to create a shareable link.",
+          : "Unable to create a permalink right now.",
       );
     } finally {
       setBusy(false);
@@ -107,7 +107,7 @@ export function ShareControls({
             disabled={busy}
             className="rounded-full border border-border bg-white px-5 py-3 text-sm font-semibold text-foreground transition hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {busy ? "Creating link" : shareLabel}
+            {busy ? "Creating permalink" : shareLabel}
           </button>
           <button
             type="button"
@@ -117,10 +117,10 @@ export function ShareControls({
             Print / Save as PDF
           </button>
         </div>
-      <p className="text-sm leading-6 text-muted">
-        Use your browser&apos;s print dialog for a clean PDF export.
-      </p>
-    </div>
+        <p className="text-sm leading-6 text-muted">
+          Use your browser&apos;s print dialog for a clean PDF export.
+        </p>
+      </div>
 
       {shareUrl ? (
         <div className="rounded-[1.25rem] border border-border bg-paper-strong px-4 py-4">
@@ -132,7 +132,7 @@ export function ShareControls({
       ) : null}
 
       <p className="text-sm leading-6 text-muted" role="status" aria-live="polite">
-        {message || "Create a permalink for this draft, or print it for circulation."}
+        {message || "Structured for reporting review, not direct publication."}
       </p>
     </div>
   );

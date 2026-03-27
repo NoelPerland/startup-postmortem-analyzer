@@ -8,6 +8,9 @@
 - [ ] Share and PDF outputs are both obvious
 - [ ] Shared permalink page feels first-class
 - [ ] Archive page degrades gracefully when persistence is unavailable
+- [ ] Archive recent-drafts state is verified when persistence is configured
+- [ ] Archive search is verified only when Meilisearch is configured
+- [ ] Shared permalink unfurl or metadata preview is checked on a real `/a/[shareId]` URL
 
 ## Runtime
 
@@ -31,3 +34,4 @@
 - [ ] LIIVO deploy notes are current
 - [ ] Demo runbook is rehearsed
 - [ ] Screenshot shotlist is complete
+- [ ] Final handoff summary is ready to share

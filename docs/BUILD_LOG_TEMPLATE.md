@@ -26,8 +26,12 @@
 - Generated article result
 - Print-friendly result
 - Share link state
+- Shared permalink unfurl / metadata check
 - Cached live result state
 - Not-found state
+- Archive unavailable state
+- Archive recent-drafts state
+- Archive zero-results search state
 - LIIVO deployment screen
 - `/api/health` response
 
@@ -60,8 +64,10 @@
 - Zero-env boot confirmed:
 - Live generation confirmed:
 - PostgreSQL share link confirmed:
+- PostgreSQL archive confirmed:
 - Valkey cache confirmed:
 - Meilisearch indexing confirmed:
+- PostgreSQL + Meilisearch archive search confirmed:
 
 ## Dead Ends / Aha Moments
 

@@ -111,6 +111,7 @@ describe("route behavior", () => {
       createAnalysisIndexer: () => ({
         isAvailable: async () => false,
         index: vi.fn(),
+        search: vi.fn(),
       }),
     }));
 
@@ -129,6 +130,56 @@ describe("route behavior", () => {
       }),
     );
     const payload = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(payload).toEqual({
+      available: true,
+      shareId: "abc123",
+      shareUrl: "http://localhost:3000/a/abc123",
+    });
+    expect(store.saveAnalysis).toHaveBeenCalledOnce();
+  });
+
+  it("still returns a share link when indexing fails after save", async () => {
+    const store = {
+      isAvailable: async () => true,
+      saveAnalysis: vi.fn(async () => ({
+        shareId: "abc123",
+        createdAt: "2026-03-25T10:00:00.000Z",
+      })),
+      getAnalysisByShareId: vi.fn(),
+    };
+
+    vi.doMock("@/lib/persistence", () => ({
+      createAnalysisStore: () => store,
+    }));
+    vi.doMock("@/lib/future", () => ({
+      createAnalysisIndexer: () => ({
+        isAvailable: async () => true,
+        index: vi.fn(async () => {
+          throw new Error("index offline");
+        }),
+        search: vi.fn(),
+      }),
+    }));
+
+    const { POST } = await import("@/app/api/share/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/share", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          subject: "Northvolt",
+          contextNotes: "Battery manufacturing",
+          analysis,
+        }),
+      }),
+    );
+    const payload = await response.json();
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(response.status).toBe(200);
     expect(payload).toEqual({

@@ -6,6 +6,7 @@ import { ShareControls } from "@/components/share-controls";
 import { getRuntimeFlags } from "@/lib/env";
 import { loadSharedAnalysisByShareId } from "@/lib/persistence";
 import { buildShareUrl } from "@/lib/share/strategy";
+import { buildSharedDraftMetadata } from "@/lib/social";
 import { resolvePublicOrigin } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -29,20 +30,7 @@ export async function generateMetadata({
     };
   }
 
-  return {
-    title: record.analysis.company.displayName,
-    description: record.analysis.overview,
-    openGraph: {
-      title: `${record.analysis.company.displayName} | Startup Post-Mortem Analyzer`,
-      description: record.analysis.overview,
-      type: "article",
-    },
-    alternates: runtime.appUrl
-      ? {
-          canonical: buildShareUrl(resolvePublicOrigin(runtime.appUrl), shareId),
-        }
-      : undefined,
-  };
+  return buildSharedDraftMetadata(record, runtime.appUrl);
 }
 
 export default async function SharedAnalysisPage({ params }: SharedPageProps) {
@@ -67,10 +55,13 @@ export default async function SharedAnalysisPage({ params }: SharedPageProps) {
             Archive
           </a>
         </div>
-        <span>Saved editorial draft</span>
+        <span>Saved permalink</span>
       </div>
       <div className="print-hidden mb-4 rounded-[1.25rem] border border-border bg-paper-strong px-5 py-4 text-sm leading-7 text-muted">
-        This permalink is a durable editorial draft. It can be copied, shared, or printed without reopening the form.
+        This link preserves the saved draft as it was generated at the time of sharing.
+        {record.analysis.sourceMode === "demo"
+          ? " This permalink contains sample output from Demo Mode, not a live model response."
+          : " This permalink contains a saved live-model draft. Verify against reporting before reuse."}
       </div>
       <ArticleView analysis={record.analysis}>
         <div className="print-hidden border-t border-border px-6 py-5 sm:px-10">
@@ -82,8 +73,8 @@ export default async function SharedAnalysisPage({ params }: SharedPageProps) {
             subject={record.subject}
           />
           <p className="mt-3 text-sm leading-6 text-muted">
-            This draft has already been saved. Copy the permalink again or print
-            the page for PDF export.
+            This page is the shareable version of the draft. Use print or Save as PDF
+            for a clean article export.
           </p>
         </div>
       </ArticleView>

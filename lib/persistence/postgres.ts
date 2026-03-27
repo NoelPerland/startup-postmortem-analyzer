@@ -231,17 +231,29 @@ export class PostgresAnalysisStore implements AnalysisStore {
         checkedAt: Date.now(),
       };
 
-      return result.rows.map((row) => ({
-        id: row.id,
-        shareId: row.share_id,
-        subject: row.subject,
-        contextNotes: row.context_notes,
-        analysis: postMortemAnalysisSchema.parse(row.analysis_json),
-        createdAt: row.created_at.toISOString(),
-        provider: row.provider,
-        model: row.model,
-        cacheKey: row.cache_key,
-      }));
+      return result.rows.flatMap((row) => {
+        try {
+          return [
+            {
+              id: row.id,
+              shareId: row.share_id,
+              subject: row.subject,
+              contextNotes: row.context_notes,
+              analysis: postMortemAnalysisSchema.parse(row.analysis_json),
+              createdAt: row.created_at.toISOString(),
+              provider: row.provider,
+              model: row.model,
+              cacheKey: row.cache_key,
+            },
+          ];
+        } catch (error) {
+          console.warn("[persistence] recent analysis skipped", {
+            shareId: row.share_id,
+            error,
+          });
+          return [];
+        }
+      });
     } catch (error) {
       availabilityStatus = null;
       throw new Error(

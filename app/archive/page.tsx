@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createAnalysisIndexer, type SearchDocument } from "@/lib/future";
-import { getRuntimeFlags } from "@/lib/env";
-import { loadRecentAnalyses } from "@/lib/persistence";
+import { loadArchiveSnapshot } from "@/lib/archive";
 import { formatDisplayDate, truncateCopy } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -15,38 +13,48 @@ type ArchivePageProps = {
 
 export const metadata: Metadata = {
   title: "Archive",
-  description: "Recent saved post-mortem drafts and optional search results.",
+  description: "A searchable archive of saved post-mortems for follow-up reporting.",
 };
 
 function ArchiveCard({
   href,
+  eyebrow,
   title,
   summary,
   meta,
+  note,
 }: {
   href: string;
+  eyebrow: string;
   title: string;
   summary: string;
   meta: string;
+  note?: string;
 }) {
   return (
     <a
       href={href}
       className="rounded-[1.5rem] border border-border bg-paper-strong px-5 py-5 transition hover:border-accent"
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">{meta}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">{eyebrow}</p>
       <h2 className="mt-3 font-serif text-3xl leading-tight text-foreground">{title}</h2>
       <p className="mt-4 text-sm leading-7 text-muted">{summary}</p>
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-medium uppercase tracking-[0.12em] text-muted">
+        <span>{meta}</span>
+        {note ? <span>{note}</span> : null}
+      </div>
     </a>
   );
 }
 
 export default async function ArchivePage({ searchParams }: ArchivePageProps) {
   const params = await searchParams;
-  const query = params.q?.trim() ?? "";
-  const runtime = getRuntimeFlags();
+  const archive = await loadArchiveSnapshot({
+    query: params.q,
+    limit: 12,
+  });
 
-  if (!runtime.persistenceConfigured) {
+  if (!archive.persistenceConfigured) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8">
         <div className="paper-shell rounded-[2rem] border border-border px-8 py-10">
@@ -59,27 +67,17 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
             </Link>
           </div>
           <h1 className="mt-4 font-serif text-4xl leading-tight text-foreground sm:text-5xl">
-            The archive becomes available when saved drafts are enabled.
+            Archive requires durable storage in this deployment.
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-8 text-muted sm:text-lg">
-            This deployment is running without PostgreSQL-backed persistence, so there
-            are no durable analyses to browse. The app remains fully usable in Demo
-            Mode and for print-to-PDF export.
+            This release is running without PostgreSQL-backed persistence, so there are
+            no saved drafts to revisit yet. The analyzer still works well in Demo Mode
+            and for print-to-PDF export.
           </p>
         </div>
       </main>
     );
   }
-
-  const recent = await loadRecentAnalyses(12);
-  const searchConfigured = runtime.searchConfigured;
-  let searchResults: SearchDocument[] = [];
-
-  if (query && searchConfigured) {
-    searchResults = await createAnalysisIndexer().search(query, 12);
-  }
-
-  const showSearchResults = query.length > 0 && searchConfigured;
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8">
@@ -87,76 +85,86 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
         <Link href="/" className="font-medium text-accent transition hover:opacity-80">
           Back to analyzer
         </Link>
-        <span>{searchConfigured ? "Archive and search" : "Recent saved drafts"}</span>
+        <span>{archive.searchConfigured ? "Archive and search" : "Recent saved drafts"}</span>
       </div>
 
       <section className="paper-shell rounded-[2rem] border border-border px-8 py-10">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-muted">
-          Archive
-        </p>
+        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-muted">Archive</p>
         <h1 className="mt-4 font-serif text-4xl leading-tight text-foreground sm:text-5xl">
-          Review saved drafts without leaving the editorial flow.
+          A searchable archive of saved post-mortems.
         </h1>
         <p className="mt-5 max-w-3xl text-base leading-8 text-muted sm:text-lg">
-          This is a lightweight archive, not a dashboard. Open a saved draft, copy its
-          permalink, or print it for circulation.
+          Built for follow-up reporting, not passive browsing. Open a saved draft,
+          copy its permalink, or print it for circulation.
         </p>
 
         <form className="mt-8 grid gap-3 sm:grid-cols-[1fr_auto]">
           <label htmlFor="q" className="sr-only">
-            Search saved analyses
+            Search archived analyses
           </label>
           <input
             id="q"
             name="q"
-            defaultValue={query}
+            aria-describedby="archive-search-note"
+            defaultValue={archive.query}
             placeholder={
-              searchConfigured
-                ? "Search saved analyses by company or theme"
-                : "Search becomes available when Meilisearch is configured"
+              archive.searchConfigured
+                ? "Search by company, theme, or reporting angle"
+                : "Search becomes available when Meilisearch indexing is configured"
             }
-            disabled={!searchConfigured}
+            disabled={!archive.searchConfigured}
             className="w-full rounded-[1.35rem] border border-border bg-white px-5 py-4 text-base text-foreground outline-none transition focus:border-accent disabled:cursor-not-allowed disabled:bg-paper"
           />
           <button
             type="submit"
-            disabled={!searchConfigured}
+            disabled={!archive.searchConfigured}
             className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#163129] disabled:cursor-not-allowed disabled:opacity-60"
           >
             Search
           </button>
         </form>
 
-        {!searchConfigured ? (
-          <p className="mt-3 text-sm leading-6 text-muted">
-            Search is optional. This deployment can still browse recent saved drafts without Meilisearch.
-          </p>
-        ) : null}
+        <p id="archive-search-note" className="mt-3 text-sm leading-6 text-muted">
+          {archive.searchConfigured
+            ? "Search works across company name, overview, lessons, and saved notes when indexing is enabled."
+            : "Archive browsing is available now. Search appears when Meilisearch indexing is configured."}
+        </p>
       </section>
 
-      {showSearchResults ? (
+      {archive.query && archive.searchConfigured ? (
         <section className="mt-8 grid gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="font-serif text-3xl text-foreground">Search results</h2>
+            <div>
+              <h2 className="font-serif text-3xl text-foreground">Search results</h2>
+              <p className="mt-2 text-sm leading-6 text-muted">
+                Search improves retrieval. It does not improve certainty.
+              </p>
+            </div>
             <span className="text-sm text-muted">
-              {searchResults.length} result{searchResults.length === 1 ? "" : "s"} for “{query}”
+              {archive.searchResults.length} result
+              {archive.searchResults.length === 1 ? "" : "s"} for &quot;{archive.query}&quot;
             </span>
           </div>
-          {searchResults.length ? (
+          {archive.searchState === "results" ? (
             <div className="grid gap-4">
-              {searchResults.map((entry) => (
+              {archive.searchResults.map((entry) => (
                 <ArchiveCard
                   key={entry.shareId}
                   href={`/a/${entry.shareId}`}
+                  eyebrow="Saved analysis"
                   title={entry.company}
-                  summary={truncateCopy(entry.overview, 220)}
-                  meta={`${formatDisplayDate(entry.createdAt)} · indexed draft`}
+                  summary={entry.preview}
+                  meta={`Generated ${formatDisplayDate(entry.generatedAt)}`}
+                  note={`${entry.sourceMode === "demo" ? "Saved from demo sample" : "Saved from live mode"} - matched on ${entry.matchedField}`}
                 />
               ))}
             </div>
           ) : (
-            <div className="rounded-[1.5rem] border border-dashed border-border px-5 py-5 text-sm leading-7 text-muted">
-              No indexed drafts matched that query yet. Try the company name or a narrower theme.
+            <div className="rounded-[1.5rem] border border-dashed border-border px-5 py-5">
+              <h2 className="font-serif text-2xl text-foreground">No matching analyses</h2>
+              <p className="mt-3 text-sm leading-7 text-muted">
+                Try a company name, a broader theme, or fewer terms. Recent saved drafts still appear below.
+              </p>
             </div>
           )}
         </section>
@@ -164,26 +172,37 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
 
       <section className="mt-8 grid gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-serif text-3xl text-foreground">Recent saved drafts</h2>
+          <div>
+            <h2 className="font-serif text-3xl text-foreground">Recent saved drafts</h2>
+            <p className="mt-2 text-sm leading-6 text-muted">
+              Durable links created through PostgreSQL-backed persistence.
+            </p>
+          </div>
           <span className="text-sm text-muted">
-            Durable links created through PostgreSQL-backed persistence
+            {archive.recent.length} saved draft{archive.recent.length === 1 ? "" : "s"}
           </span>
         </div>
-        {recent.length ? (
+        {archive.recent.length ? (
           <div className="grid gap-4">
-            {recent.map((entry) => (
+            {archive.recent.map((entry) => (
               <ArchiveCard
                 key={entry.shareId}
                 href={`/a/${entry.shareId}`}
+                eyebrow="Saved analysis"
                 title={entry.analysis.company.displayName}
                 summary={truncateCopy(entry.analysis.overview, 220)}
-                meta={`${formatDisplayDate(entry.createdAt)} · ${entry.analysis.sourceMode === "demo" ? "demo draft" : "live draft"}`}
+                meta={`Generated ${formatDisplayDate(entry.analysis.generatedAt)}`}
+                note={entry.analysis.sourceMode === "demo" ? "Saved from demo sample" : "Saved from live mode"}
               />
             ))}
           </div>
         ) : (
-          <div className="rounded-[1.5rem] border border-dashed border-border px-5 py-5 text-sm leading-7 text-muted">
-            No saved drafts yet. Create a share link from the main analyzer to start the archive.
+          <div className="rounded-[1.5rem] border border-dashed border-border px-5 py-5">
+            <h2 className="font-serif text-2xl text-foreground">No archived analyses yet</h2>
+            <p className="mt-3 text-sm leading-7 text-muted">
+              Saved post-mortems will appear here once share links are stored with
+              persistence enabled.
+            </p>
           </div>
         )}
       </section>

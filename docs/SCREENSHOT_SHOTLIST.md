@@ -10,10 +10,12 @@
 - Timeline section
 - Editorial appendix with facts / hypotheses / open questions
 - Share controls with created permalink
+- Shared permalink unfurl preview
 - Print-friendly article preview
 - Shared permalink page
 - Archive page with recent drafts
 - Archive unavailable state without PostgreSQL
+- Archive page with zero search results
 - Not-found page for invalid share links
 - `/api/health` response in browser or terminal
 

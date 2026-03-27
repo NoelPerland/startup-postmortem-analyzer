@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, Newsreader } from "next/font/google";
 import { getEnv } from "@/lib/env";
+import { buildDefaultMetadata } from "@/lib/social";
 import "./globals.css";
 
 const bodyFont = IBM_Plex_Sans({
@@ -15,32 +16,7 @@ const headlineFont = Newsreader({
 
 const env = getEnv();
 
-export const metadata: Metadata = {
-  metadataBase: env.APP_URL ? new URL(env.APP_URL) : undefined,
-  title: {
-    default: "Startup Post-Mortem Analyzer",
-    template: "%s | Startup Post-Mortem Analyzer",
-  },
-  description:
-    "A newsroom-style editorial assistant for structured startup post-mortems.",
-  openGraph: {
-    title: "Startup Post-Mortem Analyzer",
-    description:
-      "A newsroom-style editorial assistant for structured startup post-mortems.",
-    type: "website",
-  },
-  twitter: {
-    card: "summary",
-    title: "Startup Post-Mortem Analyzer",
-    description:
-      "A newsroom-style editorial assistant for structured startup post-mortems.",
-  },
-  alternates: env.APP_URL
-    ? {
-        canonical: env.APP_URL,
-      }
-    : undefined,
-};
+export const metadata: Metadata = buildDefaultMetadata(env.APP_URL);
 
 export default function RootLayout({
   children,

@@ -13,14 +13,19 @@ export function createShareId() {
 
 export function resolvePublicOrigin(appUrl?: string, requestUrl?: string) {
   if (appUrl) {
-    return appUrl;
+    return new URL(appUrl).origin;
   }
 
   if (requestUrl) {
-    return requestUrl;
+    return new URL(requestUrl).origin;
   }
 
   return "http://localhost:3000";
+}
+
+export function buildPublicUrl(path: string, appUrl?: string, requestUrl?: string) {
+  const origin = resolvePublicOrigin(appUrl, requestUrl);
+  return new URL(path, origin).toString();
 }
 
 export function truncateCopy(value: string, maxLength: number) {
@@ -28,5 +33,5 @@ export function truncateCopy(value: string, maxLength: number) {
     return value;
   }
 
-  return `${value.slice(0, maxLength - 1).trimEnd()}…`;
+  return `${value.slice(0, maxLength - 3).trimEnd()}...`;
 }

@@ -14,6 +14,7 @@ Deploy the app as a single Node.js My App. It is designed to boot in a valid sta
 
 - Respect `process.env.PORT`
 - Use `APP_URL` when you want canonical share links generated from a known public origin
+- `APP_URL` also improves canonical metadata and Open Graph preview URLs for shared drafts
 
 ## Recommended LIIVO Rollout
 
@@ -44,6 +45,7 @@ Deploy the app as a single Node.js My App. It is designed to boot in a valid sta
   - Share links under `/a/[shareId]`
   - Shared permalink page
   - Archive page with recent saved drafts
+  - Better social previews for saved permalink pages
 
 ### Phase 4: Cache + Indexing
 
@@ -53,6 +55,7 @@ Deploy the app as a single Node.js My App. It is designed to boot in a valid sta
 - Outcome:
   - 24-hour cache for repeated live lookups
   - Background indexing of saved analyses
+  - Archive search across saved drafts once drafts have been indexed
 
 ## Env Matrix
 
@@ -99,11 +102,11 @@ Example zero-env response:
     "defaultMode": "demo",
     "openAiModel": "gpt-5-mini"
   },
-  "integrations": {
-    "openai": "demo_only",
-    "postgres": "disabled",
-    "valkey": "disabled",
-    "meilisearch": "disabled"
+  "configured": {
+    "openai": false,
+    "postgres": false,
+    "valkey": false,
+    "meilisearch": false
   }
 }
 ```
@@ -131,6 +134,8 @@ Example zero-env response:
 - Check `MEILISEARCH_HOST`
 - Check `MEILISEARCH_API_KEY` if your instance requires it
 - Indexing is best-effort and happens after a successful durable save
+- Archive browsing requires PostgreSQL plus at least one created share link
+- Archive search requires Meilisearch plus already-indexed saved drafts, so empty search results are not the same as share failures
 
 ### Archive page is empty
 

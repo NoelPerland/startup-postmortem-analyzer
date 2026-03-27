@@ -184,7 +184,7 @@ export class MeilisearchAnalysisIndexer implements AnalysisIndexer {
 
       return result.hits;
     } catch (error) {
-      console.warn("[search] query failed", error);
+      console.warn(`[search] query failed (length=${query.length}, limit=${limit})`, error);
       return [];
     }
   }
