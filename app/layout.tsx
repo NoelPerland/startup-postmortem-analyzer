@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, Newsreader } from "next/font/google";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { SiteHeader } from "@/components/site-header";
 import { getEnv } from "@/lib/env";
 import { buildDefaultMetadata } from "@/lib/social";
 import { getThemeInitScript } from "@/lib/theme";
@@ -40,7 +40,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
-        <ThemeToggle />
+        <SiteHeader />
         {children}
       </body>
     </html>

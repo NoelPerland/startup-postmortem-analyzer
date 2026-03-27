@@ -29,9 +29,51 @@ const seededInitialState = (
   },
 });
 
+function IconSpark() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+      <path
+        d="M7.5 2.4v2.1M7.5 10.5v2.1M2.4 7.5h2.1M10.5 7.5h2.1"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+      />
+      <circle cx="7.5" cy="7.5" r="1.8" fill="currentColor" />
+    </svg>
+  );
+}
+
+function IconArrow() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+      <path
+        d="M2.5 7.5h9M8.5 4.5l3 3-3 3"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconList() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+      <path
+        d="M3.2 4.4h8.6M3.2 7.5h8.6M3.2 10.6h5.5"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   const [subject, setSubject] = useState("");
   const [contextNotes, setContextNotes] = useState("");
+  const [selectedExample, setSelectedExample] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const subjectRef = useRef<HTMLInputElement>(null);
   const initialState = seededInitialState(runtime);
@@ -46,7 +88,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   const analysis = currentState.analysis;
   const hasResult = currentState.status === "success" && analysis !== null;
   const featuredExamples = demoExamples.slice(0, 4);
-  const leadExample = featuredExamples[0];
+  const exampleTags = ["industrial", "consumer", "regulated", "hardware"];
   const subjectHasError = currentState.status === "error" && !currentInput.subject.trim();
   const errorTone = useMemo(() => {
     if (!currentInput.subject.trim()) {
@@ -79,6 +121,22 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
     focusForm();
   }
 
+  function handleExampleSelect(value: string) {
+    setSelectedExample(value);
+
+    if (!value) {
+      return;
+    }
+
+    const example = featuredExamples.find((entry) => entry.label === value);
+
+    if (!example) {
+      return;
+    }
+
+    applyExample(example.subject, example.contextNotes);
+  }
+
   return (
     <div className="flex flex-1 flex-col gap-10">
       <section className="paper-shell motion-enter rounded-[2rem] border border-border px-5 py-6 sm:px-8 sm:py-8 lg:px-12 lg:py-10">
@@ -89,153 +147,118 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
           </span>
         </div>
 
-        <div className="mt-8 grid gap-6 xl:grid-cols-[1.08fr_0.92fr] xl:gap-10">
+        <div className="mt-8 grid gap-8 xl:grid-cols-[1.18fr_0.82fr] xl:gap-12">
           <div className="motion-enter motion-delay-1">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-muted">
-              Startup Post-Mortem Analyzer
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
+              Research drafts for startup failures
             </p>
-            <h1 className="text-balance mt-4 max-w-4xl font-serif text-4xl leading-tight text-foreground sm:text-5xl lg:text-[4rem]">
-              Turn a startup name into a sober editorial post-mortem draft.
+            <h1 className="text-balance mt-4 max-w-4xl font-serif text-4xl leading-[1.04] text-foreground sm:text-5xl lg:text-[4.35rem]">
+              Analyze a startup like a{" "}
+              <span className="serif-emphasis">careful editor</span>.
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-foreground">
-              Structured reporting support for early research, not publication-ready fact.
-            </p>
-            <p className="mt-3 max-w-2xl text-base leading-8 text-muted sm:text-lg">
-              Timeline, failure factors, disciplined counterfactuals, and unresolved
-              questions in one readable first draft.
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-muted sm:text-[1.1rem]">
+              Generate a clean <span className="serif-emphasis">first draft</span>{" "}
+              with a timeline, failure analysis, and the questions that still
+              need reporting.
             </p>
 
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-7 flex flex-wrap gap-3">
               <button type="button" className="button-primary" onClick={focusForm}>
+                <IconArrow />
                 Start a draft
-              </button>
-              <button
-                type="button"
-                className="button-secondary"
-                onClick={() => applyExample(leadExample.subject, leadExample.contextNotes)}
-              >
-                Try Northvolt sample
               </button>
               <a href="/archive" className="subtle-link">
                 Open archive
               </a>
             </div>
-
-            <div className="section-divider mt-8 grid gap-4 pt-6 sm:grid-cols-3 sm:pt-7">
-              <div className="surface-card tint-warm px-5 py-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                  What you get
-                </p>
-                <p className="mt-2 text-sm leading-6 text-foreground">
-                  Timeline, failure analysis, salvage options, and founder lessons.
-                </p>
-              </div>
-              <div className="surface-card tint-accent px-5 py-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                  Output paths
-                </p>
-                <p className="mt-2 text-sm leading-6 text-foreground">
-                  Durable permalink when persistence exists, plus clean PDF export.
-                </p>
-              </div>
-              <div className="surface-card tint-cool px-5 py-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                  Trust model
-                </p>
-                <p className="mt-2 text-sm leading-6 text-foreground">
-                  Facts, hypotheses, and open questions stay visibly separated.
-                </p>
-              </div>
-            </div>
           </div>
 
           <div className="motion-enter motion-delay-2 space-y-4">
-            <div className="surface-card tint-accent p-5 sm:p-6">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
-                Try one now
-              </p>
-              <p className="mt-3 text-sm leading-7 text-muted">
-                Start with a recognizable case, add one line of reporting context,
-                then show the article, permalink, and PDF flow.
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {featuredExamples.map((example) => (
-                  <button
-                    key={example.label}
-                    type="button"
-                    onClick={() => applyExample(example.subject, example.contextNotes)}
-                    className="chip-button"
-                  >
-                    {example.label}
-                  </button>
-                ))}
-              </div>
-              <p className="mt-4 text-sm leading-6 text-muted">
-                Paste a company homepage when you want a cleaner lookup target.
-              </p>
-            </div>
-
             <div className="surface-inset tint-cool px-5 py-6 sm:px-6">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
+              <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
                 How it works
-              </p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-                    1. Start with the company
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-foreground">
-                    Name or URL is enough to begin.
-                  </p>
+              </h2>
+              <div className="mt-5 grid gap-4">
+                <div className="flex items-start gap-4 rounded-[1.2rem] bg-paper/40 px-4 py-4">
+                  <span className="inline-flex rounded-full bg-paper/65 p-2 text-accent">
+                    <IconSpark />
+                  </span>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+                      1. Name or URL
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-foreground">
+                      Start with the company or homepage.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-                    2. Add the angle
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-foreground">
-                    Notes stay optional unless you want to steer the draft.
-                  </p>
+                <div className="flex items-start gap-4 rounded-[1.2rem] bg-paper/40 px-4 py-4">
+                  <span className="inline-flex rounded-full bg-paper/65 p-2 text-accent">
+                    <IconList />
+                  </span>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+                      2. Add context
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-foreground">
+                      Use one note to steer the angle.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-                    3. Share or export
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-foreground">
-                    Review the result, then save a link or export a PDF.
-                  </p>
+                <div className="flex items-start gap-4 rounded-[1.2rem] bg-paper/40 px-4 py-4">
+                  <span className="inline-flex rounded-full bg-paper/65 p-2 text-accent">
+                    <IconArrow />
+                  </span>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+                      3. Share or export
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-foreground">
+                      Save the draft or export a PDF.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {!runtime.liveAvailable ? (
-          <div className="motion-enter motion-delay-3 mt-8 rounded-[1.45rem] border border-accent/15 bg-accent-soft px-5 py-4 text-sm leading-7 text-accent">
-            <span className="font-semibold">Demo Mode.</span> Curated sample workflow,
-            same structure, same export path, and the same review framing as a live run.
-          </div>
-        ) : null}
-
         <form
           id="analyzer-form"
           ref={formRef}
           action={formAction}
-          className="motion-enter motion-delay-2 mt-10 grid gap-6 rounded-[1.8rem] border border-border bg-paper/70 px-5 py-6 sm:px-6 sm:py-8"
+          className="motion-enter motion-delay-2 mt-10 grid gap-6 rounded-[1.8rem] border border-border bg-paper/70 px-5 py-6 sm:px-6 sm:py-8 lg:px-7"
           aria-busy={pending}
         >
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">
+              <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">
                 Build the draft
-              </p>
+              </h2>
               <p className="mt-2 text-sm leading-6 text-muted">
-                Start with a company. Add notes only if you want to steer the angle.
+                Name or URL first. Add context only if it helps.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-              <span className="status-chip">Timeline</span>
-              <span className="status-chip">Failure factors</span>
-              <span className="status-chip">Open questions</span>
+            <div className="min-w-[15rem] sm:min-w-[17rem]">
+              <label
+                htmlFor="example-select"
+                className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted"
+              >
+                Try a sample
+              </label>
+              <select
+                id="example-select"
+                value={selectedExample}
+                onChange={(event) => handleExampleSelect(event.target.value)}
+                className="input-surface mt-2 py-3 text-sm"
+              >
+                <option value="">Choose a sample case</option>
+                {featuredExamples.map((example, index) => (
+                  <option key={example.label} value={example.label}>
+                    {example.label} / {exampleTags[index]}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -255,13 +278,13 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               required
               value={subject}
               onChange={(event) => setSubject(event.target.value)}
-              placeholder="e.g. Northvolt, Quibi, Theranos, or company.com"
+              placeholder="Northvolt, Quibi, Theranos, or company.com"
               className="input-surface mt-2"
               aria-describedby={`subject-help${subjectHasError ? " subject-error" : ""}`}
               aria-invalid={subjectHasError}
             />
             <p id="subject-help" className="mt-2 text-sm leading-6 text-muted">
-              Use the company name, its homepage, or the short name most often used in public reporting.
+              Company name, homepage, or the public short name.
             </p>
           </div>
 
@@ -278,29 +301,52 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               rows={5}
               value={contextNotes}
               onChange={(event) => setContextNotes(event.target.value)}
-              placeholder="Optional: funding strain, manufacturing risk, governance tension, market timing, or the angle you want to test"
+              placeholder="Optional: the angle, tension, or question you want to test"
               className="input-surface mt-2 min-h-[8.75rem] resize-y"
               aria-describedby="context-help"
             />
             <p id="context-help" className="mt-2 text-sm leading-6 text-muted">
-              Keep it short. A useful note names the angle to test, not the entire backstory.
+              Keep it short. One angle is enough.
             </p>
           </div>
 
-          <div className="section-divider flex flex-col gap-4 pt-5 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="section-divider grid gap-4 pt-5 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="flex flex-wrap gap-3">
               <button type="submit" disabled={pending} className="button-primary">
-                {pending ? "Generating draft..." : "Generate first draft"}
+                {pending ? "Generating draft..." : "Generate draft"}
               </button>
               <a href="/archive" className="subtle-link">
                 Browse archive
               </a>
             </div>
-            <span className="text-sm leading-6 text-muted">
-              First draft, not a verdict. Use it to tighten reporting, not replace it.
-            </span>
+            <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+              <span className="status-chip">Timeline</span>
+              <span className="status-chip">Failure factors</span>
+              <span className="status-chip">Open questions</span>
+            </div>
           </div>
         </form>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          <div className="surface-card tint-warm px-5 py-5">
+            <span className="inline-flex rounded-xl bg-paper/70 p-2 text-accent">
+              <IconList />
+            </span>
+            <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+              What you get
+            </p>
+            <p className="mt-2 text-sm leading-6 text-foreground">
+              Timeline, what broke, what might have changed it.
+            </p>
+          </div>
+        </div>
+
+        {!runtime.liveAvailable ? (
+          <div className="motion-enter motion-delay-3 mt-8 rounded-[1.45rem] border border-accent/15 bg-accent-soft px-5 py-4 text-sm leading-7 text-accent">
+            <span className="font-semibold">Demo Mode.</span> Curated sample workflow,
+            same structure, same export path, and the same review framing as a live run.
+          </div>
+        ) : null}
 
         {pending ? (
           <div
@@ -349,11 +395,10 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
         {!hasResult && !pending && currentState.status !== "error" ? (
           <div className="motion-enter mt-8 rounded-[1.5rem] border border-dashed border-border px-5 py-5 text-sm leading-7 text-muted">
             <p className="font-semibold text-foreground">
-              Start with the company, then test the theory.
+              Start with the company, then test the angle.
             </p>
             <p className="mt-2">
-              The output is strongest when the starting point is concrete and the
-              notes are specific about the angle that needs scrutiny.
+              Best results come from a concrete company and one clear reporting angle.
             </p>
           </div>
         ) : null}

@@ -7,14 +7,12 @@ export function SiteFooter() {
             About
           </p>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-muted sm:text-base">
-            Startup Post-Mortem Analyzer is a newsroom research assistant for
-            generating structured first drafts on failed or struggling
-            startups. It is built for speed, clarity, and human verification,
-            not one-click publication.
+            A newsroom-style assistant for building startup post-mortems fast,
+            then tightening them with human reporting.
           </p>
         </div>
         <div className="section-divider pt-5 text-sm leading-7 text-muted lg:border-t-0 lg:pt-0">
-          <p>Designed for LIIVO My Apps deployment first.</p>
+          <p>Built for LIIVO My Apps first.</p>
           <p className="mt-2">PostgreSQL, Valkey, and Meilisearch stay optional.</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <a href="/archive" className="subtle-link">
