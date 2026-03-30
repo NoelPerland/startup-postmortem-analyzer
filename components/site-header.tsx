@@ -3,7 +3,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 export function SiteHeader() {
   return (
-    <header className="print-hidden sticky top-0 z-40 mx-auto w-full max-w-7xl px-4 pt-3 sm:px-6 sm:pt-4 lg:px-8">
+    <header className="print-hidden mx-auto w-full max-w-7xl px-4 pt-3 sm:px-6 sm:pt-4 lg:px-8">
       <div className="site-header-shell motion-enter">
         <Link href="/" className="site-mark">
           <span className="site-mark-icon" aria-hidden="true">

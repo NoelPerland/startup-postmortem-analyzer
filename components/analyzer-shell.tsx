@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useRef, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { generatePostMortemAction } from "@/app/analyze/actions";
 import {
   initialAnalyzerState,
@@ -80,10 +80,26 @@ function IconInfo() {
   );
 }
 
+const whatYouGetItems = [
+  {
+    title: "Timeline",
+    detail: "A quick chronology you can scan before reporting deeper.",
+  },
+  {
+    title: "What broke",
+    detail: "The operating, strategic, or financial fault lines worth testing.",
+  },
+  {
+    title: "What changes it",
+    detail: "The counterfactuals that keep the draft disciplined instead of final.",
+  },
+] as const;
+
 export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   const [subject, setSubject] = useState("");
   const [contextNotes, setContextNotes] = useState("");
   const [selectedExample, setSelectedExample] = useState("");
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const formRef = useRef<HTMLFormElement>(null);
   const subjectRef = useRef<HTMLInputElement>(null);
   const initialState = seededInitialState(runtime);
@@ -115,6 +131,23 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
         "Try the company homepage, trim the notes, or sharpen the reporting angle.",
     };
   }, [currentInput.subject, currentState.message]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (media.matches) {
+      return undefined;
+    }
+
+    const interval = window.setInterval(() => {
+      setCarouselIndex((current) => (current + 1) % whatYouGetItems.length);
+    }, 3400);
+
+    return () => window.clearInterval(interval);
+  }, []);
 
   function focusForm() {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -180,6 +213,38 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               <a href="/archive" className="subtle-link">
                 Open archive
               </a>
+            </div>
+
+            <div className="feature-carousel motion-enter motion-delay-2 mt-6 max-w-xl">
+              <div className="feature-carousel-header">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+                  What you get
+                </p>
+                <div className="feature-carousel-dots" aria-hidden="true">
+                  {whatYouGetItems.map((item, index) => (
+                    <span
+                      key={item.title}
+                      className="feature-carousel-dot"
+                      data-active={index === carouselIndex}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="feature-carousel-frame">
+                {whatYouGetItems.map((item, index) => (
+                  <div
+                    key={item.title}
+                    className="feature-carousel-slide"
+                    data-active={index === carouselIndex}
+                    aria-hidden={index !== carouselIndex}
+                  >
+                    <p className="text-sm font-semibold uppercase tracking-[0.16em] text-accent">
+                      {item.title}
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-muted">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -350,20 +415,6 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             </div>
           </div>
         </form>
-
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <div className="surface-card tint-warm px-5 py-5">
-            <span className="inline-flex rounded-xl bg-paper/70 p-2 text-accent">
-              <IconList />
-            </span>
-            <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-              What you get
-            </p>
-            <p className="mt-2 text-sm leading-6 text-foreground">
-              Timeline, what broke, what might have changed it.
-            </p>
-          </div>
-        </div>
 
         {!runtime.liveAvailable ? (
           <div className="motion-enter motion-delay-3 mt-8 rounded-[1.45rem] border border-accent/15 bg-accent-soft px-5 py-4 text-sm leading-7 text-accent">
