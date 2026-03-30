@@ -70,6 +70,16 @@ function IconList() {
   );
 }
 
+function IconInfo() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="7" cy="7" r="5.2" stroke="currentColor" strokeWidth="1.2" />
+      <circle cx="7" cy="4.25" r="0.8" fill="currentColor" />
+      <path d="M7 6.2v3.35" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   const [subject, setSubject] = useState("");
   const [contextNotes, setContextNotes] = useState("");
@@ -262,15 +272,34 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             </div>
           </div>
 
-          <div className="section-divider" />
-
           <div>
-            <label
-              htmlFor="subject"
-              className="text-sm font-semibold uppercase tracking-[0.2em] text-muted"
-            >
-              Company name or URL
-            </label>
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="subject"
+                className="text-sm font-semibold uppercase tracking-[0.2em] text-muted"
+              >
+                Company name or URL
+              </label>
+              <div className="info-tooltip-group">
+                <button
+                  type="button"
+                  className="info-tooltip-trigger"
+                  aria-label="Company name or URL guidance"
+                  aria-describedby="subject-guidance"
+                >
+                  <IconInfo />
+                </button>
+                <div id="subject-guidance" role="tooltip" className="info-tooltip-panel">
+                  <p className="font-semibold text-foreground">
+                    Start with the company, then test the angle.
+                  </p>
+                  <p className="mt-2">
+                    Best results come from a concrete company and one clear reporting
+                    angle.
+                  </p>
+                </div>
+              </div>
+            </div>
             <input
               ref={subjectRef}
               id="subject"
@@ -318,11 +347,6 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               <a href="/archive" className="subtle-link">
                 Browse archive
               </a>
-            </div>
-            <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-              <span className="status-chip">Timeline</span>
-              <span className="status-chip">Failure factors</span>
-              <span className="status-chip">Open questions</span>
             </div>
           </div>
         </form>
@@ -392,16 +416,6 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
           </div>
         ) : null}
 
-        {!hasResult && !pending && currentState.status !== "error" ? (
-          <div className="motion-enter mt-8 rounded-[1.5rem] border border-dashed border-border px-5 py-5 text-sm leading-7 text-muted">
-            <p className="font-semibold text-foreground">
-              Start with the company, then test the angle.
-            </p>
-            <p className="mt-2">
-              Best results come from a concrete company and one clear reporting angle.
-            </p>
-          </div>
-        ) : null}
       </section>
 
       {hasResult ? (
