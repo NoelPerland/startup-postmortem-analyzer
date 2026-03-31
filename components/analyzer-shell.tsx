@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useRef, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { generatePostMortemAction } from "@/app/analyze/actions";
 import {
   initialAnalyzerState,
@@ -98,6 +98,9 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   const [selectedExample, setSelectedExample] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const subjectRef = useRef<HTMLInputElement>(null);
+  const pendingRef = useRef<HTMLDivElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+  const feedbackRef = useRef<HTMLDivElement>(null);
   const initialState = seededInitialState(runtime);
   const [state, formAction, pending] = useActionState(
     generatePostMortemAction,
@@ -128,12 +131,26 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
     };
   }, [currentInput.subject, currentState.message]);
 
-  function focusForm() {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    formRef.current?.scrollIntoView({
+  function scrollToNode(
+    node: HTMLElement | null,
+    block: ScrollLogicalPosition = "start",
+  ) {
+    if (!node) {
+      return;
+    }
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    node.scrollIntoView({
       behavior: prefersReducedMotion ? "auto" : "smooth",
-      block: "start",
+      block,
     });
+  }
+
+  function focusForm() {
+    scrollToNode(formRef.current, "start");
     window.setTimeout(() => subjectRef.current?.focus(), 120);
   }
 
@@ -158,6 +175,23 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
 
     applyExample(example.subject, example.contextNotes);
   }
+
+  useEffect(() => {
+    if (pending) {
+      scrollToNode(pendingRef.current, "center");
+    }
+  }, [pending]);
+
+  useEffect(() => {
+    if (hasResult) {
+      scrollToNode(resultRef.current, "start");
+      return;
+    }
+
+    if (currentState.status === "error" || currentState.status === "success") {
+      scrollToNode(feedbackRef.current, "center");
+    }
+  }, [currentState.status, hasResult]);
 
   return (
     <div className="flex flex-1 flex-col gap-10">
@@ -353,7 +387,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             </p>
           </div>
 
-          <div className="section-divider grid gap-4 pt-5 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div className="section-divider mt-1 grid gap-4 pt-7 lg:grid-cols-[1fr_auto] lg:items-center">
             <div className="flex flex-wrap gap-3">
               <button type="submit" disabled={pending} className="button-primary">
                 {pending ? "Generating draft..." : "Generate draft"}
@@ -396,6 +430,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
 
         {pending ? (
           <div
+            ref={pendingRef}
             className="motion-enter mt-8 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-5"
             role="status"
             aria-live="polite"
@@ -423,6 +458,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
 
         {currentState.status === "error" ? (
           <div
+            ref={feedbackRef}
             id={subjectHasError ? "subject-error" : undefined}
             className="motion-enter mt-8 rounded-[1.5rem] border border-danger/25 bg-[color:color-mix(in_srgb,var(--danger)_10%,transparent)] px-5 py-4 text-sm leading-7 text-danger"
             role="alert"
@@ -434,6 +470,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
 
         {currentState.status === "success" && currentState.message ? (
           <div
+            ref={feedbackRef}
             className="motion-enter mt-8 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-4 text-sm leading-7 text-muted"
             role="status"
             aria-live="polite"
@@ -447,34 +484,19 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
       </section>
 
       {hasResult ? (
-        <div className="motion-enter motion-delay-2 grid gap-5" data-reveal>
-          <div className="print-hidden flex flex-wrap items-center justify-between gap-3 px-1">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">
-                Draft ready
-              </p>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                Review the article, then choose a durable link or a clean PDF.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-              <span className="status-chip">Output 1: share link</span>
-              <span className="status-chip">Output 2: PDF export</span>
-            </div>
-          </div>
+        <div
+          ref={resultRef}
+          className="motion-enter motion-delay-2 grid gap-4"
+          data-reveal
+        >
           <ArticleView analysis={analysis}>
-            <div className="print-hidden border-t border-divider px-6 py-6 sm:px-10">
+            <div className="print-hidden">
               <ShareControls
                 analysis={analysis}
                 contextNotes={currentInput.contextNotes}
                 shareAvailable={currentRuntime.persistenceAvailable}
                 subject={currentInput.subject}
               />
-              <p className="mt-3 text-sm leading-6 text-muted">
-                {currentRuntime.persistenceAvailable
-                  ? "Create a durable permalink, copy it, or export the article as a PDF."
-                  : "Durable links need PostgreSQL. PDF export still works now."}
-              </p>
             </div>
           </ArticleView>
         </div>

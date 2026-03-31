@@ -22,6 +22,7 @@ export type ArchiveSnapshot = {
   query: string;
   persistenceConfigured: boolean;
   searchConfigured: boolean;
+  searchMode: "disabled" | "local" | "indexed";
   recent: StoredAnalysisRecord[];
   searchResults: ArchiveSearchResult[];
   searchState: "disabled" | "idle" | "results" | "empty";
@@ -49,6 +50,7 @@ export async function loadArchiveSnapshot(
       query,
       persistenceConfigured: false,
       searchConfigured: runtime.searchConfigured,
+      searchMode: "disabled",
       recent: [],
       searchResults: [],
       searchState: runtime.searchConfigured && query ? "empty" : "disabled",
@@ -56,16 +58,38 @@ export async function loadArchiveSnapshot(
   }
 
   const loadRecent = options.loadRecent ?? loadRecentAnalyses;
-  const recent = await loadRecent(limit);
+  const recentLoadLimit =
+    query && !runtime.searchConfigured ? Math.max(limit * 3, 36) : limit;
+  const loadedRecent = await loadRecent(recentLoadLimit);
+  const recent = loadedRecent.slice(0, limit);
 
-  if (!query || !runtime.searchConfigured) {
+  if (!query) {
     return {
       query,
       persistenceConfigured: true,
       searchConfigured: runtime.searchConfigured,
+      searchMode: runtime.searchConfigured ? "indexed" : "local",
       recent,
       searchResults: [],
-      searchState: runtime.searchConfigured ? "idle" : "disabled",
+      searchState: "idle",
+    };
+  }
+
+  if (!runtime.searchConfigured) {
+    const localSearchResults = prepareArchiveSearchResults(
+      loadedRecent.map(toArchiveSearchDocument),
+      query,
+      limit,
+    );
+
+    return {
+      query,
+      persistenceConfigured: true,
+      searchConfigured: false,
+      searchMode: "local",
+      recent,
+      searchResults: localSearchResults,
+      searchState: localSearchResults.length ? "results" : "empty",
     };
   }
 
@@ -78,9 +102,38 @@ export async function loadArchiveSnapshot(
     query,
     persistenceConfigured: true,
     searchConfigured: true,
+    searchMode: "indexed",
     recent,
     searchResults,
     searchState: searchResults.length ? "results" : "empty",
+  };
+}
+
+function toArchiveSearchDocument(record: StoredAnalysisRecord): SearchDocument {
+  return {
+    id: record.id,
+    shareId: record.shareId,
+    subject: record.subject,
+    company: record.analysis.company.displayName,
+    overview: record.analysis.overview,
+    generatedAt: record.analysis.generatedAt,
+    createdAt: record.createdAt,
+    contextNotes: record.contextNotes,
+    provider: record.provider,
+    model: record.model,
+    cacheKey: record.cacheKey ?? null,
+    sourceMode: record.analysis.sourceMode,
+    timelineText: record.analysis.timeline
+      .map((entry) => `${entry.dateLabel} ${entry.event}`)
+      .join("\n"),
+    whatWentWrongText: flattenSection(record.analysis.whatWentWrong),
+    whatCouldHaveSavedItText: flattenSection(record.analysis.whatCouldHaveSavedIt),
+    lessonsForFoundersText: flattenSection(record.analysis.lessonsForFounders),
+    appendixText: [
+      ...record.analysis.observedFacts,
+      ...record.analysis.plausibleHypotheses,
+      ...record.analysis.openQuestions,
+    ].join("\n"),
   };
 }
 
@@ -270,6 +323,10 @@ function buildSnippetFromField(value: string, tokens: string[], maxLength: numbe
   const suffix = end < collapsed.length ? " ..." : "";
 
   return `${prefix}${windowed}${suffix}`;
+}
+
+function flattenSection(section: StoredAnalysisRecord["analysis"]["whatWentWrong"]) {
+  return [section.title, section.summary, ...section.bullets].join("\n");
 }
 
 function normalizeArchiveQuery(value?: string) {

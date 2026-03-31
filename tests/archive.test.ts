@@ -83,9 +83,10 @@ describe("archive helpers", () => {
     expect(snapshot.persistenceConfigured).toBe(false);
     expect(snapshot.recent).toEqual([]);
     expect(snapshot.searchState).toBe("disabled");
+    expect(snapshot.searchMode).toBe("disabled");
   });
 
-  it("loads recent drafts without calling search when indexing is not configured", async () => {
+  it("searches recent drafts locally when indexing is not configured", async () => {
     const loadRecent = vi.fn(async () => [storedAnalysis]);
     const search = vi.fn(async () => searchDocuments);
 
@@ -102,11 +103,32 @@ describe("archive helpers", () => {
       search,
     });
 
-    expect(loadRecent).toHaveBeenCalledWith(12);
+    expect(loadRecent).toHaveBeenCalledWith(36);
     expect(search).not.toHaveBeenCalled();
     expect(snapshot.recent).toHaveLength(1);
-    expect(snapshot.searchResults).toEqual([]);
-    expect(snapshot.searchState).toBe("disabled");
+    expect(snapshot.searchResults).toHaveLength(1);
+    expect(snapshot.searchResults[0]?.shareId).toBe("abc123");
+    expect(snapshot.searchState).toBe("results");
+    expect(snapshot.searchMode).toBe("local");
+  });
+
+  it("stays idle but searchable when persistence exists and no query is provided", async () => {
+    const loadRecent = vi.fn(async () => [storedAnalysis]);
+
+    const snapshot = await loadArchiveSnapshot({
+      runtime: {
+        liveAvailable: false,
+        persistenceConfigured: true,
+        cacheConfigured: false,
+        searchConfigured: false,
+        appUrl: undefined,
+      },
+      loadRecent,
+    });
+
+    expect(loadRecent).toHaveBeenCalledWith(12);
+    expect(snapshot.searchState).toBe("idle");
+    expect(snapshot.searchMode).toBe("local");
   });
 
   it("prioritizes direct company matches and builds readable snippets", () => {

@@ -92,32 +92,32 @@ export function ShareControls({
   }
 
   const shareLabel = shareUrl ? "Copy permalink" : "Create share link";
+  const statusCopy =
+    message ||
+    (shareAvailable
+      ? "Create a durable permalink or export a clean PDF."
+      : "Durable links need PostgreSQL. PDF export still works now.");
 
   return (
-    <div className="grid gap-5">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              void handleShare();
-            }}
-            disabled={busy}
-            className="button-secondary"
-          >
-            {busy ? "Creating permalink" : shareLabel}
-          </button>
-          <button type="button" onClick={() => window.print()} className="button-primary">
-            Export as PDF
-          </button>
-        </div>
-        <p className="text-sm leading-6 text-muted">
-          Use your browser&apos;s print dialog for a clean PDF export.
-        </p>
+    <div className="grid gap-2.5">
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            void handleShare();
+          }}
+          disabled={busy}
+          className="button-secondary"
+        >
+          {busy ? "Creating permalink" : shareLabel}
+        </button>
+        <button type="button" onClick={() => window.print()} className="button-primary">
+          Export as PDF
+        </button>
       </div>
 
       {shareUrl ? (
-        <div className="surface-inset px-4 py-4">
+        <div className="surface-inset px-4 py-3.5">
           <label
             htmlFor="share-url"
             className="text-xs font-semibold uppercase tracking-[0.18em] text-muted"
@@ -134,14 +134,8 @@ export function ShareControls({
         </div>
       ) : null}
 
-      {!shareAvailable && !shareUrl ? (
-        <p className="text-sm leading-6 text-muted">
-          Durable links need PostgreSQL. PDF export still works now.
-        </p>
-      ) : null}
-
       <p className="text-sm leading-6 text-muted" role="status" aria-live="polite">
-        {message || "Structured for reporting review, not direct publication."}
+        {statusCopy}
       </p>
     </div>
   );

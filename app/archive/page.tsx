@@ -91,7 +91,11 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
         <Link href="/" className="subtle-link">
           Back to analyzer
         </Link>
-        <span>{archive.searchConfigured ? "Archive and search" : "Recent saved drafts"}</span>
+        <span>
+          {archive.searchMode === "indexed"
+            ? "Archive and search"
+            : "Saved drafts archive"}
+        </span>
       </div>
 
       <section className="paper-shell motion-enter motion-delay-1 rounded-[2rem] border border-border px-8 py-10 sm:py-11">
@@ -114,16 +118,16 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
             aria-describedby="archive-search-note"
             defaultValue={archive.query}
             placeholder={
-              archive.searchConfigured
+              archive.searchMode === "indexed"
                 ? "Search by company, theme, or reporting angle"
-                : "Search becomes available when Meilisearch indexing is configured"
+                : "Search saved drafts by company, section, or reporting angle"
             }
-            disabled={!archive.searchConfigured}
+            disabled={archive.searchMode === "disabled"}
             className="input-surface"
           />
           <button
             type="submit"
-            disabled={!archive.searchConfigured}
+            disabled={archive.searchMode === "disabled"}
             className="button-primary"
           >
             Search
@@ -131,19 +135,21 @@ export default async function ArchivePage({ searchParams }: ArchivePageProps) {
         </form>
 
         <p id="archive-search-note" className="mt-3 text-sm leading-6 text-muted">
-          {archive.searchConfigured
+          {archive.searchMode === "indexed"
             ? "Search works across company name, overview, lessons, and saved notes when indexing is enabled."
-            : "Archive browsing is available now. Search appears when Meilisearch indexing is configured."}
+            : "Search works across the most recent saved drafts now. Meilisearch makes the archive broader and faster when configured."}
         </p>
       </section>
 
-      {archive.query && archive.searchConfigured ? (
+      {archive.query && archive.searchMode !== "disabled" ? (
         <section className="motion-enter motion-delay-2 mt-10 grid gap-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="font-serif text-3xl text-foreground">Search results</h2>
               <p className="mt-2 text-sm leading-6 text-muted">
-                Search improves retrieval. It does not improve certainty.
+                {archive.searchMode === "indexed"
+                  ? "Search improves retrieval. It does not improve certainty."
+                  : "Search is scanning recent saved drafts in this deployment."}
               </p>
             </div>
             <span className="text-sm text-muted">
