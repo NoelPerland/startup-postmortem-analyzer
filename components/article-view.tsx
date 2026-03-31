@@ -34,7 +34,10 @@ function SectionList({
   bullets: string[];
 }) {
   return (
-    <section className="print-avoid-break grid gap-6 border-t border-divider py-12 first:border-t-0 first:pt-0 sm:gap-7">
+    <section
+      className="print-avoid-break grid gap-6 border-t border-divider py-12 first:border-t-0 first:pt-0 sm:gap-7"
+      data-reveal
+    >
       <div className="grid gap-5 lg:grid-cols-[0.32fr_0.68fr] lg:gap-10">
         <div>
           <h2 className="font-serif text-[1.9rem] text-foreground sm:text-[2.2rem]">
@@ -64,7 +67,7 @@ function AppendixList({
   items: string[];
 }) {
   return (
-    <section className="print-avoid-break surface-card tint-cool px-5 py-6">
+    <section className="print-avoid-break surface-card tint-cool px-5 py-6" data-reveal>
       <h3 className="font-serif text-[1.6rem] text-foreground">{title}</h3>
       <ul className="mt-4 grid gap-3 text-sm leading-7 text-muted">
         {items.map((item) => (
@@ -83,7 +86,10 @@ export function ArticleView({ analysis, children }: ArticleViewProps) {
       : "Company-name lookup";
 
   return (
-    <article className="paper-shell motion-enter overflow-hidden rounded-[2rem] border border-border">
+    <article
+      className="paper-shell motion-enter overflow-hidden rounded-[2rem] border border-border"
+      data-reveal
+    >
       <div className="sr-only">Editorial post-mortem draft for {analysis.company.displayName}</div>
       <header className="border-b border-divider px-6 py-8 sm:px-10 sm:py-11">
         <div className="hidden text-sm uppercase tracking-[0.22em] text-muted print:block">
@@ -120,7 +126,10 @@ export function ArticleView({ analysis, children }: ArticleViewProps) {
       </header>
 
       <div className="px-6 py-9 sm:px-10 sm:py-11">
-        <section className="print-avoid-break grid gap-6 border-t border-divider py-12 first:border-t-0 first:pt-0 sm:gap-7">
+        <section
+          className="print-avoid-break grid gap-6 border-t border-divider py-12 first:border-t-0 first:pt-0 sm:gap-7"
+          data-reveal
+        >
           <div className="grid gap-5 lg:grid-cols-[0.32fr_0.68fr] lg:gap-10">
             <div>
               <h2 className="font-serif text-[1.9rem] text-foreground sm:text-[2.2rem]">
@@ -165,7 +174,10 @@ export function ArticleView({ analysis, children }: ArticleViewProps) {
           bullets={analysis.lessonsForFounders.bullets}
         />
 
-        <section className="print-avoid-break grid gap-6 border-t border-divider py-12 sm:gap-7">
+        <section
+          className="print-avoid-break grid gap-6 border-t border-divider py-12 sm:gap-7"
+          data-reveal
+        >
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted">
               Editorial appendix
@@ -185,7 +197,10 @@ export function ArticleView({ analysis, children }: ArticleViewProps) {
           </div>
         </section>
 
-        <section className="print-avoid-break surface-inset tint-warm rounded-[1.5rem] px-5 py-5 text-sm leading-7 text-muted">
+        <section
+          className="print-avoid-break surface-inset tint-warm rounded-[1.5rem] px-5 py-5 text-sm leading-7 text-muted"
+          data-reveal
+        >
           <p className="font-semibold uppercase tracking-[0.18em] text-foreground">
             Verification note
           </p>

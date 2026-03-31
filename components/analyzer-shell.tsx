@@ -196,7 +196,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
 
           </div>
 
-          <div className="motion-enter motion-delay-2 space-y-4">
+          <div className="motion-enter motion-delay-2 space-y-4" data-reveal>
             <div className="surface-inset tint-cool px-5 py-6 sm:px-6">
               <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
                 How it works
@@ -252,6 +252,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
           action={formAction}
           className="motion-enter motion-delay-2 mt-10 grid gap-6 rounded-[1.8rem] border border-border bg-paper/70 px-5 py-6 sm:px-6 sm:py-8 lg:px-7"
           aria-busy={pending}
+          data-reveal
         >
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
@@ -384,7 +385,10 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
         </form>
 
         {!runtime.liveAvailable ? (
-          <div className="motion-enter motion-delay-3 mt-8 rounded-[1.45rem] border border-accent/15 bg-accent-soft px-5 py-4 text-sm leading-7 text-accent">
+          <div
+            className="motion-enter motion-delay-3 mt-8 rounded-[1.45rem] border border-accent/15 bg-accent-soft px-5 py-4 text-sm leading-7 text-accent"
+            data-reveal
+          >
             <span className="font-semibold">Demo Mode.</span> Curated sample workflow,
             same structure, same export path, and the same review framing as a live run.
           </div>
@@ -395,10 +399,14 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             className="motion-enter mt-8 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-5"
             role="status"
             aria-live="polite"
+            data-reveal
           >
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted">
-              Building draft
-            </p>
+            <div className="flex items-center gap-3">
+              <span className="draft-spinner" aria-hidden="true" />
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted">
+                Building draft
+              </p>
+            </div>
             <ol className="mt-4 grid gap-3 text-sm leading-7 text-muted">
               <li className="surface-inset px-4 py-3">
                 1. Normalizing the subject and reporter notes
@@ -418,6 +426,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             id={subjectHasError ? "subject-error" : undefined}
             className="motion-enter mt-8 rounded-[1.5rem] border border-danger/25 bg-[color:color-mix(in_srgb,var(--danger)_10%,transparent)] px-5 py-4 text-sm leading-7 text-danger"
             role="alert"
+            data-reveal
           >
             <span className="font-semibold">{errorTone.title}</span> {errorTone.detail}
           </div>
@@ -428,6 +437,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             className="motion-enter mt-8 rounded-[1.5rem] border border-border bg-paper-strong px-5 py-4 text-sm leading-7 text-muted"
             role="status"
             aria-live="polite"
+            data-reveal
           >
             <span className="font-semibold text-foreground">Draft status.</span>{" "}
             {currentState.message}
@@ -437,7 +447,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
       </section>
 
       {hasResult ? (
-        <div className="motion-enter motion-delay-2 grid gap-5">
+        <div className="motion-enter motion-delay-2 grid gap-5" data-reveal>
           <div className="print-hidden flex flex-wrap items-center justify-between gap-3 px-1">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">
