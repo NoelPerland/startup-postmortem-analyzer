@@ -17,7 +17,7 @@ export function getThemeInitScript() {
       try {
         const root = document.documentElement;
         const stored = localStorage.getItem("${themeStorageKey}");
-        const preference = ${sanitizeThemePreference.name}(stored);
+        const preference = stored === "dark" ? "dark" : "light";
         root.dataset.themePreference = preference;
         root.dataset.theme = preference;
         root.style.colorScheme = preference;
@@ -27,8 +27,5 @@ export function getThemeInitScript() {
         document.documentElement.style.colorScheme = "light";
       }
     })();
-  `
-    .replace(sanitizeThemePreference.name, `function sanitizeThemePreference(value) {
-      return value === "light" || value === "dark" ? value : "light";
-    }`);
+  `;
 }

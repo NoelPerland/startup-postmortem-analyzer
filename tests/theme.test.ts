@@ -16,5 +16,9 @@ describe("theme helpers", () => {
     expect(script).toContain("spma-theme");
     expect(script).toContain("dataset.themePreference");
     expect(script).toContain("dataset.theme");
+    const run = new Function("document", "localStorage", script);
+    const root = { dataset: {} as Record<string, string>, style: {} as Record<string, string> };
+    run({ documentElement: root }, { getItem: () => "dark" });
+    expect(root.dataset.theme).toBe("dark");
   });
 });

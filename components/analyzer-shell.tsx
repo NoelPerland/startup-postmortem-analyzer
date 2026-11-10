@@ -29,20 +29,6 @@ const seededInitialState = (
   },
 });
 
-function IconArrow() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-      <path
-        d="M2.5 7.5h9M8.5 4.5l3 3-3 3"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function IconInfo() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -74,7 +60,6 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   const analysis = currentState.analysis;
   const hasResult = currentState.status === "success" && analysis !== null;
   const featuredExamples = demoExamples.slice(0, 4);
-  const exampleTags = ["industrial", "consumer", "regulated", "hardware"];
   const subjectHasError = currentState.status === "error" && !currentInput.subject.trim();
   const errorTone = useMemo(() => {
     if (!currentInput.subject.trim()) {
@@ -156,7 +141,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-10">
-      <section className="paper-shell motion-enter rounded-[2rem] border border-border px-5 py-6 sm:px-8 sm:py-8 lg:px-12 lg:py-10">
+      <section className="paper-shell motion-enter px-5 py-6 sm:px-8 sm:py-8 lg:px-12 lg:py-10">
         <div className="mt-4 max-w-4xl">
           <div>
             <h1 className="text-balance mt-4 max-w-4xl font-serif text-4xl leading-[1.04] text-foreground sm:text-5xl lg:text-[4.35rem]">
@@ -165,16 +150,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             <p className="mt-5 max-w-2xl text-lg leading-8 text-muted sm:text-[1.1rem]">
               Build a first draft with a timeline, failure factors, and questions to verify.
             </p>
-
-            <div className="mt-7 flex flex-wrap gap-3">
-              <button type="button" className="button-primary" onClick={focusForm}>
-                <IconArrow />
-                Start a draft
-              </button>
-              <a href="/archive" className="subtle-link">
-                Open archive
-              </a>
-            </div>
+            {!runtime.liveAvailable ? <p className="mt-4 text-sm leading-6 text-muted">Demo mode: choose a sample case to see an editable draft. Live generation is unavailable.</p> : null}
 
           </div>
 
@@ -184,7 +160,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
           id="analyzer-form"
           ref={formRef}
           action={formAction}
-          className="motion-enter motion-delay-2 mt-10 grid gap-6 rounded-[1.8rem] border border-border bg-paper/70 px-5 py-6 sm:px-6 sm:py-8 lg:px-7"
+          className="motion-enter motion-delay-2 mt-10 grid gap-6 border-t border-border pt-8"
           aria-busy={pending}
           data-reveal
         >
@@ -193,14 +169,11 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">
                 Build the draft
               </h2>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                Name or URL first. Add context only if it helps.
-              </p>
             </div>
             <div className="min-w-[15rem] sm:min-w-[17rem]">
               <label
                 htmlFor="example-select"
-                className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted"
+                className="text-sm font-semibold text-foreground"
               >
                 Try a sample
               </label>
@@ -211,9 +184,9 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
                 className="input-surface mt-2 py-3 text-sm"
               >
                 <option value="">Choose a sample case</option>
-                {featuredExamples.map((example, index) => (
+                {featuredExamples.map((example) => (
                   <option key={example.label} value={example.label}>
-                    {example.label} / {exampleTags[index]}
+                    {example.label}
                   </option>
                 ))}
               </select>
@@ -224,7 +197,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             <div className="flex items-center gap-2">
               <label
                 htmlFor="subject"
-                className="text-sm font-semibold uppercase tracking-[0.2em] text-muted"
+                className="text-sm font-semibold text-foreground"
               >
                 Company name or URL
               </label>
@@ -257,18 +230,15 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               onChange={(event) => setSubject(event.target.value)}
               placeholder="Northvolt, Quibi, Theranos, or company.com"
               className="input-surface mt-2"
-              aria-describedby={`subject-help${subjectHasError ? " subject-error" : ""}`}
+              aria-describedby={subjectHasError ? "subject-error" : undefined}
               aria-invalid={subjectHasError}
             />
-            <p id="subject-help" className="mt-2 text-sm leading-6 text-muted">
-              Company name, homepage, or the public short name.
-            </p>
           </div>
 
           <div>
             <label
               htmlFor="contextNotes"
-              className="text-sm font-semibold uppercase tracking-[0.2em] text-muted"
+              className="text-sm font-semibold text-foreground"
             >
               Extra context or reporting notes
             </label>
@@ -280,34 +250,16 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
               onChange={(event) => setContextNotes(event.target.value)}
               placeholder="Optional: the angle, tension, or question you want to test"
               className="input-surface mt-2 min-h-[8.75rem] resize-y"
-              aria-describedby="context-help"
             />
-            <p id="context-help" className="mt-2 text-sm leading-6 text-muted">
-              Keep it short. One angle is enough.
-            </p>
           </div>
 
           <div className="section-divider mt-1 grid gap-4 pt-7 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div className="flex flex-wrap gap-3">
-              <button type="submit" disabled={pending} className="button-primary">
-                {pending ? "Generating draft..." : "Generate draft"}
-              </button>
-              <a href="/archive" className="subtle-link">
-                Browse archive
-              </a>
-            </div>
+            <button type="submit" disabled={pending} className="button-primary">
+              {pending ? "Generating draft..." : "Generate draft"}
+            </button>
           </div>
 
         </form>
-
-        {!runtime.liveAvailable ? (
-          <div
-            className="motion-enter motion-delay-3 mt-8 rounded-[1.45rem] border border-accent/15 bg-accent-soft px-5 py-4 text-sm leading-7 text-accent"
-            data-reveal
-          >
-            <span className="font-semibold">Demo mode.</span> Choose a sample to see a reviewable draft.
-          </div>
-        ) : null}
 
         {pending ? (
           <div

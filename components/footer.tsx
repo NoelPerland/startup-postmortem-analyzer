@@ -1,7 +1,7 @@
 export function SiteFooter() {
   return (
     <footer
-      className="print-hidden motion-enter mt-10 rounded-[2rem] border border-border bg-paper/75 px-6 py-8 shadow-[var(--shadow-subtle)] backdrop-blur sm:px-8 sm:py-9"
+      className="print-hidden mt-10 border-t border-border px-6 py-8 sm:px-8 sm:py-9"
       data-reveal
     >
       <div className="grid gap-6 lg:grid-cols-[0.7fr_0.3fr]">

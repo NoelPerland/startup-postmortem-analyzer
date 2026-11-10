@@ -18,8 +18,7 @@ export function SiteHeader() {
             </svg>
           </span>
           <span className="site-mark-copy">
-            <span className="site-mark-kicker">Startup Post-Mortem Analyzer</span>
-            <span className="site-mark-title">Editorial startup analysis</span>
+            <span className="site-mark-title">Startup Analyzer</span>
           </span>
         </Link>
 
