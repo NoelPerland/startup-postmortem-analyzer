@@ -1,5 +1,7 @@
 # Startup Post-Mortem Analyzer
 
+**Public app:** https://startup-postmortem-analyzer.vercel.app/ (Vercel, demo mode until a server-side AI key is configured).
+
 Startup Post-Mortem Analyzer is a newsroom-style research assistant for producing structured first-draft analyses of failed or struggling startups. It is built for Erik Sandberg's LIIVO internship assignment: serious tone, fast demo path, and optional infrastructure that stays out of the way until it is needed.
 
 ## What The App Does
@@ -128,15 +130,11 @@ No secrets are exposed to client components.
 2. Valkey for 24-hour caching of repeated live lookups
 3. Meilisearch for indexing saved analyses and later archive search
 
-## LIIVO My Apps Deployment
+## Production deployment
 
-- Deploy as a single Node.js My App
-- The app is phase-1 ready with no bound services
-- Add `OPENAI_API_KEY` when you want live generation
-- Add `DATABASE_URL` when you want durable share links
-- Add `VALKEY_URL` and `MEILISEARCH_HOST` only when you want the optional cache/indexing path
+The `main` branch deploys to the existing Vercel project `startup-postmortem-analyzer`. `APP_URL` is set to the public origin in Production settings. No AI key or database is configured there, so the public app runs in demo mode with stateless drafts and print export.
 
-Detailed LIIVO notes live in [`docs/LIIVO_DEPLOY.md`](./docs/LIIVO_DEPLOY.md).
+Earlier [LIIVO deployment notes](./docs/LIIVO_DEPLOY.md) remain for project history; Vercel is the current host.
 Demo-facing handoff notes live in:
 
 - [`docs/DEMO_RUNBOOK.md`](./docs/DEMO_RUNBOOK.md)
