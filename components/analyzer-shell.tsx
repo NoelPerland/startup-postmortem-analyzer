@@ -29,20 +29,6 @@ const seededInitialState = (
   },
 });
 
-function IconSpark() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-      <path
-        d="M7.5 2.4v2.1M7.5 10.5v2.1M2.4 7.5h2.1M10.5 7.5h2.1"
-        stroke="currentColor"
-        strokeWidth="1.35"
-        strokeLinecap="round"
-      />
-      <circle cx="7.5" cy="7.5" r="1.8" fill="currentColor" />
-    </svg>
-  );
-}
-
 function IconArrow() {
   return (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
@@ -57,19 +43,6 @@ function IconArrow() {
   );
 }
 
-function IconList() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-      <path
-        d="M3.2 4.4h8.6M3.2 7.5h8.6M3.2 10.6h5.5"
-        stroke="currentColor"
-        strokeWidth="1.35"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
 function IconInfo() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -79,18 +52,6 @@ function IconInfo() {
     </svg>
   );
 }
-
-const featureStripItems = [
-  "Timeline",
-  "What went wrong",
-  "What could have saved it",
-  "Lessons for founders",
-  "Failure factors",
-  "Observed facts",
-  "Open questions",
-  "Share link",
-  "PDF export",
-] as const;
 
 export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   const [subject, setSubject] = useState("");
@@ -196,26 +157,13 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
   return (
     <div className="flex flex-1 flex-col gap-10">
       <section className="paper-shell motion-enter rounded-[2rem] border border-border px-5 py-6 sm:px-8 sm:py-8 lg:px-12 lg:py-10">
-        <div className="flex flex-wrap items-center gap-3 text-sm">
-          <span className="status-chip">Editorial research tool</span>
-          <span className="status-chip status-chip-strong">
-            {runtime.liveAvailable ? "Live mode ready" : "Demo Mode ready"}
-          </span>
-        </div>
-
-        <div className="mt-8 grid gap-8 xl:grid-cols-[1.18fr_0.82fr] xl:gap-12">
-          <div className="motion-enter motion-delay-1">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
-              Research drafts for startup failures
-            </p>
+        <div className="mt-4 max-w-4xl">
+          <div>
             <h1 className="text-balance mt-4 max-w-4xl font-serif text-4xl leading-[1.04] text-foreground sm:text-5xl lg:text-[4.35rem]">
-              Analyze a startup like a{" "}
-              <span className="serif-emphasis">careful editor</span>.
+              What happened to this startup?
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-muted sm:text-[1.1rem]">
-              Generate a clean <span className="serif-emphasis">first draft</span>{" "}
-              with a timeline, failure analysis, and the questions that still
-              need reporting.
+              Build a first draft with a timeline, failure factors, and questions to verify.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
@@ -230,54 +178,6 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
 
           </div>
 
-          <div className="motion-enter motion-delay-2 space-y-4" data-reveal>
-            <div className="surface-inset tint-cool px-5 py-6 sm:px-6">
-              <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-muted">
-                How it works
-              </h2>
-              <div className="mt-5 grid gap-4">
-                <div className="flex items-start gap-4 rounded-[1.2rem] bg-paper/40 px-4 py-4">
-                  <span className="inline-flex rounded-full bg-paper/65 p-2 text-accent">
-                    <IconSpark />
-                  </span>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-                      1. Name or URL
-                    </p>
-                    <p className="mt-1 text-sm leading-6 text-foreground">
-                      Start with the company or homepage.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 rounded-[1.2rem] bg-paper/40 px-4 py-4">
-                  <span className="inline-flex rounded-full bg-paper/65 p-2 text-accent">
-                    <IconList />
-                  </span>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-                      2. Add context
-                    </p>
-                    <p className="mt-1 text-sm leading-6 text-foreground">
-                      Use one note to steer the angle.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 rounded-[1.2rem] bg-paper/40 px-4 py-4">
-                  <span className="inline-flex rounded-full bg-paper/65 p-2 text-accent">
-                    <IconArrow />
-                  </span>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-                      3. Share or export
-                    </p>
-                    <p className="mt-1 text-sm leading-6 text-foreground">
-                      Save the draft or export a PDF.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <form
@@ -398,24 +298,6 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             </div>
           </div>
 
-          <div className="feature-strip" aria-hidden="true">
-            <div className="feature-strip-shell">
-              <div className="feature-strip-title">What you get</div>
-              <div className="feature-strip-viewport">
-                <div className="feature-strip-track">
-                  {[0, 1].map((copyIndex) => (
-                    <div key={copyIndex} className="feature-strip-group">
-                      {featureStripItems.map((item) => (
-                        <span key={`${copyIndex}-${item}`} className="feature-strip-pill">
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
         </form>
 
         {!runtime.liveAvailable ? (
@@ -423,8 +305,7 @@ export function AnalyzerShell({ runtime }: AnalyzerShellProps) {
             className="motion-enter motion-delay-3 mt-8 rounded-[1.45rem] border border-accent/15 bg-accent-soft px-5 py-4 text-sm leading-7 text-accent"
             data-reveal
           >
-            <span className="font-semibold">Demo Mode.</span> Curated sample workflow,
-            same structure, same export path, and the same review framing as a live run.
+            <span className="font-semibold">Demo mode.</span> Choose a sample to see a reviewable draft.
           </div>
         ) : null}
 

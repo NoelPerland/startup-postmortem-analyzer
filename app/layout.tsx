@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ScrollReveal } from "@/components/scroll-reveal";
 import { IBM_Plex_Sans, Newsreader } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
 import { getEnv } from "@/lib/env";
@@ -41,7 +40,6 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
-        <ScrollReveal />
         <SiteHeader />
         {children}
       </body>
