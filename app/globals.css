@@ -428,6 +428,10 @@ html[data-theme="dark"] .status-chip-strong {
   box-shadow: var(--shadow-subtle);
 }
 
+html[data-theme="dark"] .button-primary {
+  color: #101827;
+}
+
 .button-primary:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-float);
