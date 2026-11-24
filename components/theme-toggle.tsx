@@ -14,7 +14,11 @@ function applyTheme(preference: ThemePreference) {
   root.dataset.themePreference = preference;
   root.dataset.theme = preference;
   root.style.colorScheme = preference;
-  localStorage.setItem(themeStorageKey, preference);
+  try {
+    localStorage.setItem(themeStorageKey, preference);
+  } catch {
+    // Theme remains usable when browser storage is blocked.
+  }
 }
 
 function IconSun() {
